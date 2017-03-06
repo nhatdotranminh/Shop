@@ -6,15 +6,17 @@ import {
 //import { EventEmitter } from 'fbemitter';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Drawer from 'react-native-drawer';
-
+//
+//
 import Menu from './Components/Menu';
 import Main from './Components/Main';
 import Screen2 from './Components/Screen2';
 import LaptopProducts from './Components/LaptopProducts'
 import Detail from './Components/Detail'
+import Cart from './Components/Cart'
 
 import navigationHelper from './Components/navigation';
-
+console.disableYellowBox = true;
 //let _emitter = new EventEmitter();
 // Class chinh
 export default class Shoponline extends Component{
@@ -37,6 +39,8 @@ export default class Shoponline extends Component{
         return(<Screen2 navigator={navigator}{...route.passProps}/>)
       case 'Detail':
         return(<Detail navigator={navigator}{...route.passProps}/>)
+      case 'Cart':
+        return(<Cart navigator={navigator}{...route.passProps}/>)
       
     }
 

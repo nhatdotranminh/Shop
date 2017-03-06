@@ -18,6 +18,10 @@ module.exports = function (scene) {
         'Detail':{
             title:'Detail',
             id:'Detail'
+        },
+        'Cart':{
+            title:'Cart',
+            id:'Cart'
         }
     }
 

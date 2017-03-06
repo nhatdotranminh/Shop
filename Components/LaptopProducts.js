@@ -33,6 +33,7 @@ export default class LaptopProducts extends Component{
             dataSource: new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2 })
         }
         this.itemsRef = this.getRef().child('Laptop/Brand/'+this.props.brandName+'/Products');
+        this.navigate=this.navigate.bind(this);
     }
     getRef() {
      return firebaseApp.ref();
@@ -50,7 +51,7 @@ export default class LaptopProducts extends Component{
 
             })
              product =[]
-             
+               
         })
        
     }
@@ -83,61 +84,38 @@ export default class LaptopProducts extends Component{
     
     render(){
         return(
-            <Container>
-                <Header style={{backgroundColor:'#e67e22'}}>
+            <View style={styles.container}>
+			   <Header style={{backgroundColor:'#e67e22'}}>
                     <Left>
                         <Button transparent onPress={()=> this.props.navigator.pop()}>
-                            <Icon name='arrow-back' />
+                            <Icon style={{fontSize: 20}} name='arrow-back' />
                         </Button>
                     </Left>
                     <Body>
-                        <Title>{this.props.brandName}</Title>
+                       <Title>{this.props.brandName}</Title>
                     </Body>
                     <Right>
-                       
+                        
                     </Right>
                 </Header>
-                <View style={styles.productContainer}>
-                    <ListView style = {styles.gridView}
+				<View style ={styles.contain}>
+					<ListView contentContainerStyle = {styles.gridView}
 						dataSource = {this.state.dataSource}
 						renderRow = {this.renderRow.bind(this)}  />
-                </View>
-
-            </Container>
+				</View>
+			</View>
         );
 
     }
 }
-const styles = StyleSheet.create({
-    bar:{
-        flex: 1,
-        backgroundColor:'#8bc34a',
-        flexDirection:'row',
-        marginTop: 20,
-        height: deviceScreen.width/5-40
-    },
-    productContainer:{
-        flex: 10
-    },
-    back:{
-		flex: 1,
-		justifyContent:'center',
-		alignItems: 'center'
+const styles = StyleSheet.create({ 
+    container:{ flex: 1},
+	contain:{
+		flex: 10
 	},
-	backImage:{
-		width: 30,
-		height: 30
-	},
-    title:{
-		flex: 6,
-		justifyContent:'center',
-		alignItems:'center'
-	},
-	titleText:{ color: 'white' },
-	none:{ flex:1 },
-    gridView:{ flexDirection:'row', flexWrap:'wrap', marginLeft: 10, marginRight: 10 },
+	gridView:{ flexDirection:'row', flexWrap:'wrap', marginLeft: 10, marginRight: 10 },
 	// renderRow
-    row:{ height: deviceScreen.height/3 },
+	row:{ height: deviceScreen.height/3 },
 	square:{
 		width:(deviceScreen.width -20)/2 -20,
 		height: deviceScreen.width /2 + 20,
@@ -156,11 +134,11 @@ const styles = StyleSheet.create({
 		 flex: 2.5,
 		 justifyContent:'center',
 		 alignItems: 'center',
-		// backgroundColor:'#8bc34a',
+	//	 backgroundColor:'#8bc34a',
 		 borderRadius: 15
 
 	 },
 	 nameText: {
-		 fontSize: 16, color: 'black'
+		 fontSize: 16, //color: 'white'
 	 }
 })

@@ -4,17 +4,19 @@ import {
     Text,
     TouchableOpacity,
     Dimensions,
-    ListView,
+    ScrollView,
     Navigator,
     Image,
     StyleSheet
 } from 'react-native';
 import{
-    Container, Header, Title, Button, Left, Right, Body, Footer, Tab,Tabs
+    Container, Header, Title, Button, Left, Right, Body, Footer, Tab,Tabs,Toast
 } from 'native-base'
 import Icon from 'react-native-vector-icons/MaterialIcons';
 // import screen
 //
+import Cart from './Cart'
+
 // firebase config
 //
 import firebaseApp from './firebase';
@@ -22,20 +24,78 @@ import firebaseApp from './firebase';
 //
 // bien
 var deviceScreen = Dimensions.get('window')
-var detail= [];
+var arrImg=[]
 //
 
 export default class Detail extends Component{
     constructor(props){
         super(props)
         this.state={
-            dataSource: new ListView.DataSource({rowHasChanged: (r1, r2)=> r1 !== r2 })
+            uriImage: this.props.image,
+            arr:[]
         }      
         this.itemRef = this.getRef().child('Laptop/Brand/'+this.props.brandName+'/Products/'+ this.props.productName)
+        this.viewDetailRef= this.getRef().child('Image/'+ this.props.productName)
+        this.orderNavigate=this.orderNavigate.bind(this)
+        this.chooseImage=this.chooseImage.bind(this)
     }
     getRef(){
         return firebaseApp.ref();
     }
+    componentWillMount(){
+        this.viewDetailRef.on('value', (snap)=>{
+            var count = snap.numChildren()
+            for(i =1; i< count; i++){
+                var detailImage=this.viewDetailRef.child('image'+i)
+                detailImage.on('value', (datasnap)=>{
+                    arrImg.push({image: datasnap.val()})
+                })
+            }
+            this.setState({
+                arr: arrImg
+            })
+            arrImg = []
+        })
+    }
+    renderRow(properties){
+        return(
+              <TouchableOpacity style={styles.card}
+                onPress = {() => this.chooseImage(properties.image)} >
+                 <Image source={{uri: properties.image}} style={styles.img} />
+              </TouchableOpacity>
+        )
+    }
+    chooseImage(image){
+        this.setState({
+            uriImage: image
+        })
+    }
+    navigate(routename){
+        this.props.navigator.push({
+            id: routename,
+            passProps:{
+
+            }
+        })
+    }
+    orderNavigate(routename, name, price , image){
+        this.props.navigator.push({
+            id:routename,
+            passProps:{
+                productName: name, price: price, image: image
+            }
+        })
+       
+         Toast.show({
+              text: 'Thêm vào giỏ hàng thành công',
+              position: 'bottom',
+              buttonText: 'Okay'
+             
+            })
+        
+    }
+        
+    
     render(){
         return(
              <Container>
@@ -49,7 +109,7 @@ export default class Detail extends Component{
                         <Title></Title>
                     </Body>
                     <Right>
-                        <Button transparent>
+                        <Button transparent onPress={()=> this.navigate('Cart')}>
                              <Icon style={{fontSize: 20}}name='shopping-cart'/>
                         </Button>
                     </Right>
@@ -58,24 +118,33 @@ export default class Detail extends Component{
                     <Tabs>
                          <Tab heading="Tổng quan">
                              <View style={styles.tongquancontainer}>
-                                 <View>
-                                    <Text style={styles.productNameText}>
-                                        {this.props.productName}
-                                    </Text>
-                                    <Text style={styles.price}>
-                                        {this.props.price} VNĐ
-                                    </Text>
-                                    <Image style={styles.Img} source={{uri: this.props.image}}/>
+                                     <View style={styles.nameAndPriceCon}>
+                                        <Text style={styles.productNameText}>
+                                            {this.props.productName}
+                                        </Text>
+                                        <Text style={styles.price}>
+                                            {this.props.price} VNĐ
+                                        </Text>    
+                                    </View>                                    
+                                    <View style={styles.imgContainer}>
+                                         <Image style={styles.productImg} source={{uri: this.state.uriImage}}/>
+                                    </View>
+                                    <View style={styles.imageList}>
+                                        <ScrollView
+                                            horizontal={true}
+                                            automaticallyAdjustContentInsets={false}
+                                            style={[styles.scrollView, styles.horizontalScrollView]} >
+                                            {this.state.arr.map(this.renderRow.bind(this))}
+                                        </ScrollView>
+                                    </View>
                                      
-                                 </View>
-                               
                              </View>
                          </Tab>
                          <Tab heading="Chi tiết sản phẩm">
                              <View style={styles.ctContainer}>
                                 <Text style={styles.text}>Thông số kỹ thuật:{this.props.Mieuta}</Text>
                                 <Text style={styles.text}>Tình trạng: {this.props.tinhtrang}</Text>
-                                <Text style={styles.textt}>Bảo hành: {this.props.baohanh}</Text>
+                                <Text style={styles.text}>Bảo hành: {this.props.baohanh}</Text>
                                 <Text style={styles.text}>Quà tặng: {this.props.khuyenmai}</Text>
                              </View>
                          </Tab>
@@ -83,7 +152,7 @@ export default class Detail extends Component{
 
                 </View>
                 <Footer>
-                    <Button style={{backgroundColor:'#2ecc71'}}>
+                    <Button style={{backgroundColor:'#2ecc71'}} onPress={()=> this.orderNavigate('Main',this.props.productName,this.props.price, this.props.image)}>
                         <Icon style={{fontSize: 20}} name='add-shopping-cart'/>
                         <Text>ADD TO CART</Text>
                     </Button>
@@ -95,12 +164,16 @@ export default class Detail extends Component{
 }
 const styles=StyleSheet.create({
     mainContainer:{
-        flexDirection:'column',
-        flex: 9
+        
+        flex: 1
     },
     tongquancontainer:{
         justifyContent:'center',
-        alignItems:'center'
+        alignItems:'center',
+        flex: 1
+    },
+    nameAndPriceCon:{
+        flex: 1
     },
     button:{
         backgroundColor:'#2ecc71'
@@ -112,10 +185,11 @@ const styles=StyleSheet.create({
     price:{
         fontSize: 30
     },
-    Img:{
-        width:deviceScreen.height/4,
-        height: deviceScreen.height/4+30,
-        resizeMode:'contain'
+    productImg:{
+        width: deviceScreen.height/2,
+        height: deviceScreen.height/2-30,
+        resizeMode:'contain',
+        
     },
     ctContainer:{
         flex: 1,
@@ -123,7 +197,23 @@ const styles=StyleSheet.create({
     },
     text:{
         fontSize: 20
-    }
-
+    },
+    card:{
+        paddingTop: 10,
+        alignItems:'center',
+        borderRadius: 3
+    },
+    img:{
+        height: deviceScreen.height/6 -20,
+        width: deviceScreen.height/6 -20
+    },
+    imgContainer:{
+        flex: 2.5,
+        justifyContent:'center',
+        alignItems:'center'
+    },
+    scrollView:{height: deviceScreen.height/6},
+    horizontalScrollView:{height: 120},
+    imageList:{flex: 2, backgroundColor:'white'},
 
 });
