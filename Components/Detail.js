@@ -73,10 +73,10 @@ export default class Detail extends Component{
                          </Tab>
                          <Tab heading="Chi tiết sản phẩm">
                              <View style={styles.ctContainer}>
-                                <Text style={styles.mieutaText}>Thông số kỹ thuật:{this.props.Mieuta}</Text>
-                                <Text style={styles.tinhtrangText}>Tình trạng: {this.props.tinhtrang}</Text>
-                                <Text style={styles.baohanhTextt}>Bảo hành: {this.props.baohanh}</Text>
-                                <Text style={styles.quatangText}>Quà tặng: {this.props.khuyenmai}</Text>
+                                <Text style={styles.text}>Thông số kỹ thuật:{this.props.Mieuta}</Text>
+                                <Text style={styles.text}>Tình trạng: {this.props.tinhtrang}</Text>
+                                <Text style={styles.textt}>Bảo hành: {this.props.baohanh}</Text>
+                                <Text style={styles.text}>Quà tặng: {this.props.khuyenmai}</Text>
                              </View>
                          </Tab>
                     </Tabs>
@@ -120,6 +120,9 @@ const styles=StyleSheet.create({
     ctContainer:{
         flex: 1,
         margin: 10
+    },
+    text:{
+        fontSize: 20
     }
 
 
