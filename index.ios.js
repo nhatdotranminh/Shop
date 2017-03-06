@@ -15,17 +15,17 @@ import Detail from './Components/Detail'
 
 import navigationHelper from './Components/navigation';
 
-let _emitter = new EventEmitter();
+//let _emitter = new EventEmitter();
 // Class chinh
-export default class nativebase extends Component{
+export default class Shoponline extends Component{
   componentDidMount(){
-    var self= this;
+    /*var self= this;
     _emitter.addListener('openMenu',() =>{
       self._drawer.open();
     })
     _emitter.addListener('back', () => {
             self._navigator.pop();
-        });
+        });*/
   }
   _renderScene(route, navigator){
     switch(route.id){
@@ -132,4 +132,4 @@ const styles= StyleSheet.create({
     
 })
 
-AppRegistry.registerComponent('nativebase', () => nativebase);
+AppRegistry.registerComponent('Shoponline', () => Shoponline);
