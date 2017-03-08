@@ -64,18 +64,28 @@ export default class Main extends Component{
   createRow(uri){
     return(
       <TouchableOpacity style={styles.card}
-        onPress={() => this.navigate('LaptopProducts', uri.name)}
+        onPress={() => this.navigate('LaptopProducts', uri.name, this.props._cartkey)}
       >
         <Image source={{uri: uri.image}} style={styles.img} />
 
       </TouchableOpacity>
     )
   }
-  navigate(routename, name){
+  navigate(routename, name,cartid){
     this.props.navigator.push({
       id:routename,
       passProps:{
-        brandName: name
+        brandName: name,
+        _cartkey: cartid
+      }
+      
+    })
+  }
+  cartNavigate(routeid, cartid){
+    this.props.navigator.push({
+      id:routeid,
+      passProps:{
+        _cartkey: cartid
       }
       
     })
@@ -104,7 +114,9 @@ export default class Main extends Component{
                        
                     </Body>
                     <Right>
-                        
+                         <Button transparent onPress={()=> this.cartNavigate('Cart', this.props._cartkey)}>
+                             <Icon style={{fontSize: 20}}name='menu'/>
+                        </Button>
                     </Right>
            </Header>
             <Header searchBar rounded  >

@@ -24,6 +24,8 @@ import firebaseApp from './firebase';
 //
 // bien
 var deviceScreen = Dimensions.get('window')
+var newPostKey =firebaseApp.ref().child('Cart').push().key;
+var Childkey= firebaseApp.ref().child('Cart/'+ newPostKey).push().key;
 var arrImg=[]
 //
 
@@ -32,7 +34,9 @@ export default class Detail extends Component{
         super(props)
         this.state={
             uriImage: this.props.image,
-            arr:[]
+            arr:[],
+            newCartId: newPostKey
+            
         }      
         this.itemRef = this.getRef().child('Laptop/Brand/'+this.props.brandName+'/Products/'+ this.props.productName)
         this.viewDetailRef= this.getRef().child('Image/'+ this.props.productName)
@@ -70,22 +74,34 @@ export default class Detail extends Component{
             uriImage: image
         })
     }
-    navigate(routename){
+    navigate(routename, cartId){
         this.props.navigator.push({
             id: routename,
             passProps:{
-
+                cartId: cartId,
             }
         })
     }
-    orderNavigate(routename, name, price , image){
+    orderNavigate(routename, name, price , image, cartId){
+       
+        var date = new Date().toDateString()
+         firebaseApp.ref('/Cart/' + newPostKey+'/'+Childkey).set({
+           ProductName:name,
+           Price: price,
+           Image: image,
+           Ngaynhap: date
+         });
+       console.log('Detail'+this.state.newCartId)
+       console.log('truyen tu gio hang'+this.props._cKey)
+       
+       
         this.props.navigator.push({
             id:routename,
             passProps:{
-                productName: name, price: price, image: image
+                cartId: cartId,
+                price: price
             }
-        })
-       
+        }) 
          Toast.show({
               text: 'Thêm vào giỏ hàng thành công',
               position: 'bottom',
@@ -109,7 +125,7 @@ export default class Detail extends Component{
                         <Title></Title>
                     </Body>
                     <Right>
-                        <Button transparent onPress={()=> this.navigate('Cart')}>
+                        <Button transparent onPress={()=> this.navigate('Cart', this.state.newCartId)}>
                              <Icon style={{fontSize: 20}}name='shopping-cart'/>
                         </Button>
                     </Right>
@@ -152,7 +168,7 @@ export default class Detail extends Component{
 
                 </View>
                 <Footer>
-                    <Button style={{backgroundColor:'#2ecc71'}} onPress={()=> this.orderNavigate('Main',this.props.productName,this.props.price, this.props.image)}>
+                    <Button style={{backgroundColor:'#2ecc71'}} onPress={()=> this.orderNavigate('Cart',this.props.productName,this.props.price, this.props.image, this.state.newCartId)}>
                         <Icon style={{fontSize: 20}} name='add-shopping-cart'/>
                         <Text>ADD TO CART</Text>
                     </Button>
