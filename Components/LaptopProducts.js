@@ -61,7 +61,7 @@ export default class LaptopProducts extends Component{
 			<View style={styles.row}>
 				<View style={styles.square}>
 					<TouchableOpacity style={styles.productImage} onPress={()=> this.navigate('Detail', Products.name,
-                        Products.price, Products.color, Products.image, Products.Des, Products.tinhtrang, Products.baohanh, Products.khuyenmai)}>
+                        Products.price, Products.color, Products.image, Products.Des, Products.tinhtrang, Products.baohanh, Products.khuyenmai, this.props.cartId)}>
 						<Image style={styles.image} source={{uri: Products.image}}/>
 					</TouchableOpacity>
 					<View style={styles.nameView}>
@@ -71,17 +71,17 @@ export default class LaptopProducts extends Component{
 			</View>
 		)
     }
-    navigate(routename, name, price, color, image, Des, tinhtrang, baohanh, khuyenmai){
+    navigate(routename, name, price, color, image, Des, tinhtrang, baohanh, khuyenmai, cartid){
     this.props.navigator.push({
       id:routename,
       passProps:{
         productName: name, price: price, color: color, image: image, Mieuta: Des, tinhtrang: tinhtrang, baohanh: baohanh,
-        khuyenmai: khuyenmai
+        khuyenmai: khuyenmai, cartId: cartid
       }
       
     })
   }
-    
+   
     render(){
         return(
             <View style={styles.container}>

@@ -13,9 +13,10 @@ import {
 } from 'react-native';
 // bo thu vien nativebase.io
 import {
-  Spinner, Container,Header, Item, Input, Button,Left, Right, Body,Icon
+  Spinner, Container,Header, Item, Input, Button,Left, Right, Body
 } from 'native-base';
 import Drawer from 'react-native-drawer';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 // import screen
 import LaptopProducts from './LaptopProducts'
@@ -40,9 +41,10 @@ export default class Main extends Component{
       searchText:'',
       array : []
     }
-
+    console.log('Main' + this.props.cartId)
     this.itemsRef = this.getRef().child('Laptop/Brand');
-    this.navigate=this.navigate.bind(this)
+    this.navigate=this.navigate.bind(this);
+    this. cartNavigate=this.cartNavigate.bind(this)
 
   }
   getRef() {
@@ -64,7 +66,7 @@ export default class Main extends Component{
   createRow(uri){
     return(
       <TouchableOpacity style={styles.card}
-        onPress={() => this.navigate('LaptopProducts', uri.name, this.props._cartkey)}
+        onPress={() => this.navigate('LaptopProducts', uri.name, this.props.cartId)}
       >
         <Image source={{uri: uri.image}} style={styles.img} />
 
@@ -76,7 +78,7 @@ export default class Main extends Component{
       id:routename,
       passProps:{
         brandName: name,
-        _cartkey: cartid
+        cartId: cartid
       }
       
     })
@@ -85,7 +87,7 @@ export default class Main extends Component{
     this.props.navigator.push({
       id:routeid,
       passProps:{
-        _cartkey: cartid
+        cartId: cartid
       }
       
     })
@@ -114,18 +116,18 @@ export default class Main extends Component{
                        
                     </Body>
                     <Right>
-                         <Button transparent onPress={()=> this.cartNavigate('Cart', this.props._cartkey)}>
-                             <Icon style={{fontSize: 20}}name='menu'/>
+                         <Button transparent onPress={()=> this.cartNavigate('Cart', this.props.cartId)}>
+                             <Icon style={{fontSize: 20}}name='shopping-cart'/>
                         </Button>
                     </Right>
            </Header>
             <Header searchBar rounded  >
               <Item>
-                  <Icon name="search" />
+                  <Icon style={{fontSize: 20, marginLeft: 10}} name="search" />
                   <Input placeholder="Search"
                   onChangeText={(text) => this.setState({searchText: text})}
                   value={this.state.text} />
-                  <Icon active name="people" />
+                  <Icon  style={{fontSize: 20, marginRight: 10}} active name="people" />
               </Item>
               <Button transparent>
                   <Text>Search</Text>

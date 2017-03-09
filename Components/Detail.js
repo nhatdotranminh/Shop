@@ -23,9 +23,9 @@ import firebaseApp from './firebase';
 //
 //
 // bien
-var deviceScreen = Dimensions.get('window')
-var newPostKey =firebaseApp.ref().child('Cart').push().key;
-var Childkey= firebaseApp.ref().child('Cart/'+ newPostKey).push().key;
+var deviceScreen = Dimensions.get('window') 
+
+var newPostKey =firebaseApp.ref().child('Cart').push().key; 
 var arrImg=[]
 //
 
@@ -83,16 +83,25 @@ export default class Detail extends Component{
         })
     }
     orderNavigate(routename, name, price , image, cartId){
-       
         var date = new Date().toDateString()
-         firebaseApp.ref('/Cart/' + newPostKey+'/'+Childkey).set({
-           ProductName:name,
-           Price: price,
-           Image: image,
-           Ngaynhap: date
-         });
+        if(this.props.cartId === this.state.newCartId){
+            let childId =firebaseApp.ref().child('Cart/'+ this.props.cartId).push().key;
+            firebaseApp.ref('/Cart/' + this.props.cartId +'/'+childId).update({
+            ProductName:name,
+            Price: price,
+            Image: image,
+            Ngaynhap: date
+            });
+        }else{
+            var Childkey= firebaseApp.ref().child('Cart/'+ newPostKey).push().key;
+            firebaseApp.ref('/Cart/' + newPostKey+'/'+Childkey).set({
+            ProductName:name,
+            Price: price,
+            Image: image,
+            Ngaynhap: date
+            });
+         }
        console.log('Detail'+this.state.newCartId)
-       console.log('truyen tu gio hang'+this.props._cKey)
        
        
         this.props.navigator.push({

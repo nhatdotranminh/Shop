@@ -7,7 +7,8 @@ import {
     ListView,
     Navigator,
     Image,
-    StyleSheet
+    StyleSheet,
+    Alert
 } from 'react-native';
 import{
     Container, Header, Title, Button, Left, Right, Body, Footer
@@ -22,7 +23,9 @@ import firebaseApp from './firebase';
 //
 // bien
 var deviceScreen = Dimensions.get('window')
-var Tonggia= 0;
+var Tonggia = 0;
+var Total = 0;
+  
 var arr=[];
 
 //
@@ -32,12 +35,17 @@ export default class Cart extends Component{
         super(props)
         this.state={
             dataSource: new ListView.DataSource({rowHasChanged: (r1, r2)=> r1 !== r2 }),
-            Sum: ''
+            Sum: '',
+            childkey:'',
         }      
         this.itemRef = this.getRef().child('Cart/'+this.props.cartId)
-        Tonggia=this.props.price+(this.props.price * 10/100);
+        if(this.props.price == null){
+            Tonggia = 0;
+        }else{
+            Tonggia=this.props.price+(this.props.price * 10/100);
+        }
         console.log('Cart ID la'+this.props.cartId)
-        
+        Total+=Tonggia
        
     }
     getRef(){
@@ -47,86 +55,151 @@ export default class Cart extends Component{
         this.props.navigator.push({
             id: routename,
             passProps:{
-                _cartkey: cartid
+                cartId: cartid
             }
         })
         
     }
+    payNavigate(routeid, tong){
+        this.props.navigator.push({
+            id: routeid,
+            passProps:{
+                Tongthanhtoan: tong
+            }
+        })
+
+    }
+    deleteProduct(CID,price){
+        firebaseApp.ref('Cart/'+this.props.cartId+'/'+CID).remove()
+        
+        Total = Total-(price+(price*10/100))
+        this.setState({
+            Sum: Total
+        })
+    }
+   
     componentWillMount(){
        this.itemRef.on('value', (snap)=>{
          snap.forEach((child)=>{
           arr.push({CID: child.key , name: child.val().ProductName,price:child.val().Price ,image: child.val().Image})
        })
-       
         this.setState({
            dataSource: this.state.dataSource.cloneWithRows(arr),
-            Sum: Tonggia
+            Sum: Total
             
         })
         Tonggia= 0;
         arr=[]
      })
     }
+    
     renderRow(property){
-        console.log('Ten sp'+property.name)
-       
         return(
             <View style={styles.productContainer}>
                 <View style={styles.nameView}>
                     <Text style={styles.name}> {property.name}</Text>
                     
                 </View>
-                <View style={styles.productView}>
+                <View style={styles.productView} >
                     <View style={styles.imgView}>
                         <Image source={{uri: property.image}} style={styles.img}/>
                     </View>
                     <View style={styles.priceView}>
-                        <Text style={styles.proName}>{property.price}</Text>
+                        <Text style={styles.proName}>Đơn giá: {property.price} VNĐ</Text>
+                        <Button transparent onPress={()=>Alert.alert(
+                        'Xoá Sản phẩm khỏi giỏ hàng',
+                        'Bạn có muốn xoá sản phẩm '+ property.name+' khỏi giỏ hàng',
+                        [
+                            {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+                            {text: 'OK', onPress: () => this.deleteProduct(property.CID, property.price)},
+                        ],
+                        { cancelable: false }
+                        ) }>
+                             <Icon  style={{fontSize: 20}} name='delete'/>
+                        </Button>
                     </View>
                 </View>
             </View>
            
         )
+        
     }
     
     render(){
-        return(
-             <Container>
-                <Header style={{backgroundColor:'#e67e22'}}>
-                    <Left>
-                        <Button transparent onPress={()=> this.props.navigator.pop({passProps:{_cKey:this.props.cartid}})}>
-                            <Icon style={{fontSize: 20}} name='arrow-back' />
-                        </Button>
-                    </Left>
-                    <Body>
-                        <Title>Giỏ hàng</Title>
-                    </Body>
-                    <Right>
-                        <Button transparent onPress={()=> this.navigate('Main', this.props.cartid)}>
-                             <Icon style={{fontSize: 20}}name='home'/>
-                        </Button>
-                    </Right>
-                </Header>
-               
-                 <ListView 
-                  dataSource = {this.state.dataSource}
-                  renderRow = {this.renderRow.bind(this)} />
-              
-                  <View style={styles.Tonggia}>
-                     <Text>Tong tien thanh toan : {this.state.Sum}</Text>
-                  </View>
-               
-                <Footer>
-                        <Button >
-                            <Text>Submit</Text>
-                        </Button>
-                    </Footer>
-            </Container>
+        console.log(this.state.Sum)
+        console.log('Tong giá'+Total)
+       if( Total ==0 ){
+           return(
+                <Container>
+                    <Header style={{backgroundColor:'#e67e22'}}>
+                        <Left>
+                            <Button transparent onPress={()=> this.props.navigator.pop()}>
+                                <Icon style={{fontSize: 20}} name='arrow-back' />
+                            </Button>
+                        </Left>
+                        <Body>
+                        <Text>Giỏ hàng </Text>
+                        </Body>
+                        <Right>
+                            <Button transparent onPress={()=> this.navigate('Main', this.props.cartId)}>
+                                <Icon style={{fontSize: 20}}name='home'/>
+                            </Button>
+                        </Right>
+                    </Header>
+                    <View style={styles.EmptyCart}>
+                        <Text style={styles.name}>Giỏ hàng của bạn đang trống </Text>
+                    </View>
+                   
                 
+                    <View style={styles.Tonggia}>
+                        <Text style={{fontSize: 20, fontWeigth: 'bold'}}>Tổng số ước tính : {this.state.Sum} VNĐ</Text>
+                        
+                    </View>
                 
-               
+                    <Footer>
+                            <Button disabled>
+                                <Text>TIẾN HÀNH THANH TOÁN</Text>
+                            </Button>
+                        </Footer>
+                </Container>
+            );
+       }else{
+            return(
+                <Container>
+                    <Header style={{backgroundColor:'#e67e22'}}>
+                        <Left>
+                            <Button transparent onPress={()=> this.props.navigator.pop()}>
+                                <Icon style={{fontSize: 20}} name='arrow-back' />
+                            </Button>
+                        </Left>
+                        <Body>
+                        <Text>Giỏ hàng </Text>
+                        </Body>
+                        <Right>
+                            <Button transparent onPress={()=> this.navigate('Main', this.props.cartId)}>
+                                <Icon style={{fontSize: 20}}name='home'/>
+                            </Button>
+                        </Right>
+                    </Header>
+                
+                    <ListView 
+                    dataSource = {this.state.dataSource}
+                    renderRow = {this.renderRow.bind(this)} />
+                
+                    <View style={styles.Tonggia}>
+                        <Text style={{fontSize: 20, fontWeigth: 'bold'}}>Tổng số ước tính : {this.state.Sum} VNĐ</Text>
+                        <Text style={{color: 'gray' ,fontSize: 16}}>Bao gồm VAT 10%</Text>
+                    </View>
+                
+                    <Footer>
+                            <Button full success onPress={()=> this.payNavigate('Screen2', this.state.Sum)}>
+                                <Text>TIẾN HÀNH THANH TOÁN</Text>
+                            </Button>
+                        </Footer>
+                </Container>
            
-        );
+             );
+        }
      }
 }
   const styles=StyleSheet.create({
@@ -163,7 +236,15 @@ export default class Cart extends Component{
     },
     nameView:{
         flex:1,
+        marginLeft: 15
        
+    },
+    name:{
+        fontSize: 16,
+        color:'black',
+        fontWeight: '600',
+        
+
     },
     proName:{
         fontSize: 16,
@@ -176,8 +257,14 @@ export default class Cart extends Component{
     Tonggia:{
         flex:1,
        // backgroundColor:'red',
-       marginLeft: 10
+       marginLeft: 10,
+       justifyContent:'flex-end'
     },
+    EmptyCart:{
+        flex: 1,
+        justifyContent:'center',
+        alignItems:'center'
+    }
    
     
   })
