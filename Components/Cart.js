@@ -16,6 +16,7 @@ import{
 import Icon from 'react-native-vector-icons/MaterialIcons';
 // import screen
 //
+import Pay from './Pay'
 // firebase config
 //
 import firebaseApp from './firebase';
@@ -25,6 +26,7 @@ import firebaseApp from './firebase';
 var deviceScreen = Dimensions.get('window')
 var Tonggia = 0;
 var Total = 0;
+var Demso=0
   
 var arr=[];
 
@@ -37,12 +39,16 @@ export default class Cart extends Component{
             dataSource: new ListView.DataSource({rowHasChanged: (r1, r2)=> r1 !== r2 }),
             Sum: '',
             childkey:'',
+            dem:''
         }      
         this.itemRef = this.getRef().child('Cart/'+this.props.cartId)
+        this.valRef = this.getRef().child('Thamso/')
+       
+        
         if(this.props.price == null){
             Tonggia = 0;
         }else{
-            Tonggia=this.props.price+(this.props.price * 10/100);
+            Tonggia=this.props.price+(this.props.price * 0.1);
         }
         console.log('Cart ID la'+this.props.cartId)
         Total+=Tonggia
@@ -71,23 +77,27 @@ export default class Cart extends Component{
     }
     deleteProduct(CID,price){
         firebaseApp.ref('Cart/'+this.props.cartId+'/'+CID).remove()
-        
+       
         Total = Total-(price+(price*10/100))
         this.setState({
-            Sum: Total
+            Sum: Total,
+            dem: Demso
         })
     }
    
     componentWillMount(){
        this.itemRef.on('value', (snap)=>{
+        var count = snap.numChildren()
          snap.forEach((child)=>{
           arr.push({CID: child.key , name: child.val().ProductName,price:child.val().Price ,image: child.val().Image})
        })
         this.setState({
            dataSource: this.state.dataSource.cloneWithRows(arr),
-            Sum: Total
+            Sum: Total,
+            dem: count
             
         })
+        Demso=count
         Tonggia= 0;
         arr=[]
      })
@@ -105,7 +115,7 @@ export default class Cart extends Component{
                         <Image source={{uri: property.image}} style={styles.img}/>
                     </View>
                     <View style={styles.priceView}>
-                        <Text style={styles.proName}>Đơn giá: {property.price} VNĐ</Text>
+                        <Text style={styles.proName}>Đơn giá: {property.price.toFixed(3).replace(/(\d)(?=(\d{3})+\.)/g, '$1,')} VNĐ</Text>
                         <Button transparent onPress={()=>Alert.alert(
                         'Xoá Sản phẩm khỏi giỏ hàng',
                         'Bạn có muốn xoá sản phẩm '+ property.name+' khỏi giỏ hàng',
@@ -173,7 +183,7 @@ export default class Cart extends Component{
                             </Button>
                         </Left>
                         <Body>
-                        <Text>Giỏ hàng </Text>
+                        <Text>Giỏ hàng({this.state.dem})</Text>
                         </Body>
                         <Right>
                             <Button transparent onPress={()=> this.navigate('Main', this.props.cartId)}>
@@ -181,21 +191,23 @@ export default class Cart extends Component{
                             </Button>
                         </Right>
                     </Header>
-                
-                    <ListView 
-                    dataSource = {this.state.dataSource}
-                    renderRow = {this.renderRow.bind(this)} />
-                
+                    <View style={{flex: 4.5}}>
+                        <ListView 
+                        dataSource = {this.state.dataSource}
+                        renderRow = {this.renderRow.bind(this)} />
+                    </View>
+                    
                     <View style={styles.Tonggia}>
+                       
                         <Text style={{fontSize: 20, fontWeigth: 'bold'}}>Tổng số ước tính : {this.state.Sum} VNĐ</Text>
                         <Text style={{color: 'gray' ,fontSize: 16}}>Bao gồm VAT 10%</Text>
                     </View>
                 
                     <Footer>
-                            <Button full success onPress={()=> this.payNavigate('Screen2', this.state.Sum)}>
-                                <Text>TIẾN HÀNH THANH TOÁN</Text>
-                            </Button>
-                        </Footer>
+                         <Button full success onPress={()=> this.payNavigate('Pay', this.state.Sum)}>
+                              <Text>TIẾN HÀNH THANH TOÁN</Text>
+                         </Button>
+                    </Footer>
                 </Container>
            
              );
@@ -255,7 +267,7 @@ export default class Cart extends Component{
        // backgroundColor:'green'
     },
     Tonggia:{
-        flex:1,
+        flex:0.5,
        // backgroundColor:'red',
        marginLeft: 10,
        justifyContent:'flex-end'
