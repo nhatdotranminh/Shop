@@ -22,10 +22,6 @@ module.exports = function (scene) {
         'Cart':{
             title:'Cart',
             id:'Cart'
-        },
-        'Pay':{
-            title:'Pay',
-            id:'Pay'
         }
     }
 

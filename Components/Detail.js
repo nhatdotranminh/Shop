@@ -148,7 +148,7 @@ export default class Detail extends Component{
                                             {this.props.productName}
                                         </Text>
                                         <Text style={styles.price}>
-                                            {this.props.price.toFixed(3).replace(/(\d)(?=(\d{3})+\.)/g, '$1,')} VNĐ
+                                            {this.props.price} VNĐ
                                         </Text>    
                                     </View>                                    
                                     <View style={styles.imgContainer}>
@@ -208,7 +208,7 @@ const styles=StyleSheet.create({
         color:'#e67e22'
     },
     price:{
-        fontSize: 24
+        fontSize: 30
     },
     productImg:{
         width: deviceScreen.height/2,
