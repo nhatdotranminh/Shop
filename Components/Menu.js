@@ -2,15 +2,15 @@ import React, {Component} from 'react';
 import{
   View,
   Text,Alert,
-  StyleSheet, Image, Dimensions,TouchableOpacity,Navigator,ListView
+  StyleSheet, Image, Dimensions,TouchableOpacity,Navigator,ListView,
 
 } from 'react-native';
 //import styles from './styles';
 import{
-  Container, Content, ListItem, Left, Body, Right, Switch, Radio,  Icon, Badge
+    Icon, Button, Thumbnail
 } from 'native-base'
-import Screen2 from './Screen2'
-import Button from 'react-native-button';
+import Login from './Login'
+
 var deviceScreen = Dimensions.get('window')
 var _navigate;
 
@@ -20,100 +20,80 @@ export default class Menu extends Component{
         this.state = {
             dataSource: new ListView.DataSource({
                 rowHasChanged: (row1, row2) => row1 !== row2
-            })
+            }),
+            avatarimg:require('../Images.gray.jpeg')
         };
         _navigate = this.props.navigate;
     }
 
     componentDidMount() {
         this.setState({
-            dataSource: this.state.dataSource.cloneWithRows(['Menu', 'Screen2'])
+            dataSource: this.state.dataSource.cloneWithRows(['Main', 'Login'])
         });
     }
 
     _renderMenuItem(item) {
         return(
-            <Button style={styles.menuItem} onPress={()=> this.onItemSelect(item)}>{item}</Button>
+            <Button transparent onPress={()=> this.onItemSelect(item)}><Text style={{color:'white'}}>{item}</Text></Button>
         );
     }
-  onItemSelect(item) {
+   onItemSelect(item) {
         _navigate(item);
     }
     
 
   render() {
     return (
-        <ListView
-                style={styles.container}
-                dataSource={this.state.dataSource}
-                renderRow={(item) => this._renderMenuItem(item)}
-            />
+     
+      <View style={styles.container}>
+        
+        <View style={styles.userInfo}>
+          <View style={styles.userView}>
+             <Thumbnail  style={{width: 80, height: 80, borderRadius: 40}} source={require('../Images/gray.jpeg')}/>
+             <Text style={styles.nameText}> User name </Text>
+          </View>
+        </View>
+        <View style={styles.main}>
+          <ListView
+              style={styles.container}
+              dataSource={this.state.dataSource}
+              renderRow={(item) => this._renderMenuItem(item)}
+              />
+        </View>
+        <View style={styles.content}>
+        </View>
+      </View>
     )
   }
 
 }
 const styles= StyleSheet.create({
-  menucontainer:{
-    flex : 1,
-
-  },
-  imagecontent:{
-    flex:3,
-
-  },
-  image:{
+  container:{
     flex: 1,
-    width: deviceScreen.width/1.5 + 45 , height: deviceScreen.height/3-20,
-    resizeMode:'stretch', marginBottom: 5, borderRadius: 5
+    backgroundColor:'#34495e'
   },
-  buttoncontainer:{
+  userInfo:{
+    marginTop: 20,
+    flex: 1.5,
+    borderWidth: 0.5
+  },
+  main:{
+    flex: 1.5,
+    borderWidth: 0.5
+  },
+  content:{
     flex: 5,
-
-
+    borderWidth: 0.5
   },
-  button:{
-    flex:1,
-    borderBottomWidth:0.3,
-    borderColor:'black',
-    flexDirection:'row'
+  userView:{
+    flexDirection:'row',
+    margin: 10,
   },
-
-  none:{
-    flex: 11,
-    backgroundColor:'white'
-  },
-  text:{
-    alignSelf:'center',
-    fontSize: 18,
-    fontWeight:'200',
-    fontFamily: 'Cochin'
-
-
-  },
-  leftIcon:{
-    flex:2,
-    marginLeft: 10,
-    justifyContent: 'center'
-  },
-  body:{
-    flex: 10,
-    alignItems:'flex-start',
-    justifyContent:'flex-start',
-  },
-  rightIcon:{
-    flex: 7,
-    justifyContent:'flex-end',
-    alignItems:'flex-end',
-    marginRight:5,
-
-  },
-  menuItem: {
-        color: '#333',
-        padding: 10,
-        textAlign: 'left'
-    }
-
-
+  nameText:{
+    padding: 10,
+    fontSize: 16,
+    color:'white'
+  }
 
 
 })

@@ -30,8 +30,11 @@ export default class Pay extends Component{
                         <Icon style={{fontSize: 20}}name='home'/>
                       </Button>
                     </Right>
+              </Header>
+         
+              <View style={styles.}>
 
-             </Header>
+              </View>
             </Container>
         );
     }

@@ -11,9 +11,9 @@ module.exports = function (scene) {
             title: 'LaptopProducts',
             id: 'LaptopProducts'
         },
-        'Screen2':{
-            title: 'Screen2',
-            id:'Screen2'
+        'Login':{
+            title: 'Login',
+            id:'Login'
         },
         'Detail':{
             title:'Detail',

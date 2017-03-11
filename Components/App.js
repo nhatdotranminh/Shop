@@ -8,7 +8,7 @@ import Drawer from 'react-native-drawer';
 // import sceen
 import Menu from './Menu';
 import Main from './Main';
-import Screen2 from './Screen2';
+import Login from './Login';
 import LaptopProducts from './LaptopProducts'
 import Detail from './Detail'
 import Cart from './Cart'
@@ -24,8 +24,8 @@ export default class APP extends Component{
         return(<Main navigator={navigator}{...route.passProps}/>)
       case 'LaptopProducts':
         return(<LaptopProducts navigator={navigator}{...route.passProps}/>)
-      case 'Screen2':
-        return(<Screen2 navigator={navigator}{...route.passProps}/>)
+      case 'Login':
+        return(<Login navigator={navigator}{...route.passProps}/>)
       case 'Detail':
         return(<Detail navigator={navigator}{...route.passProps}/>)
       case 'Cart':
