@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
   StyleSheet,
   Text,
@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 // bo thu vien nativebase.io
 import {
-  Spinner, Container,Header, Item, Input, Button,Left, Right, Body
+  Spinner, Container, Header, Item, Input, Button, Left, Right, Body
 } from 'native-base';
 import Drawer from 'react-native-drawer';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -31,123 +31,123 @@ var deviceScreen = Dimensions.get('window')
 var arrBrand = []
 //
 // classs chinh
-export default class Main extends Component{
-  constructor(props){
+export default class Main extends Component {
+  constructor(props) {
     super(props)
     this.state = {
-      dataSource: new ListView.DataSource({rowHasChanged: (r1,r2) => r1 !== r2 }),
+      dataSource: new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 }),
       //isVisibleisVisible: true,
       loaded: false,
-      searchText:'',
-      array : []
+      searchText: '',
+      array: []
     }
     console.log('Main' + this.props.cartId)
     this.itemsRef = this.getRef().child('Laptop/Brand');
-    this.navigate=this.navigate.bind(this);
-    this. cartNavigate=this.cartNavigate.bind(this)
+    this.navigate = this.navigate.bind(this);
+    this.cartNavigate = this.cartNavigate.bind(this)
 
   }
   getRef() {
     return firebaseApp.ref();
   }
-  componentWillMount(){
-      this.itemsRef.on('value', (dataSnapShot) => {
+  componentWillMount() {
+    this.itemsRef.on('value', (dataSnapShot) => {
       dataSnapShot.forEach((child) => {
-        arrBrand.push({name: child.key, image: child.val().Image})
-        })
-        this.setState({
-          dataSource: this.state.dataSource.cloneWithRows(arrBrand),
-          loaded: true,
-          array: arrBrand
+        arrBrand.push({ name: child.key, image: child.val().Image })
+      })
+      this.setState({
+        dataSource: this.state.dataSource.cloneWithRows(arrBrand),
+        loaded: true,
+        array: arrBrand
       })
       arrBrand = []
     })
   }
-  createRow(uri){
-    return(
+  createRow(uri) {
+    return (
       <TouchableOpacity style={styles.card}
         onPress={() => this.navigate('LaptopProducts', uri.name, this.props.cartId)}
       >
-        <Image source={{uri: uri.image}} style={styles.img} />
+        <Image source={{ uri: uri.image }} style={styles.img} />
 
       </TouchableOpacity>
     )
   }
-  navigate(routename, name,cartid){
+  navigate(routename, name, cartid) {
     this.props.navigator.push({
-      id:routename,
-      passProps:{
+      id: routename,
+      passProps: {
         brandName: name,
         cartId: cartid
       }
-      
+
     })
   }
-  cartNavigate(routeid, cartid){
+  cartNavigate(routeid, cartid) {
     this.props.navigator.push({
-      id:routeid,
-      passProps:{
+      id: routeid,
+      passProps: {
         cartId: cartid
       }
-      
+
     })
   }
-//
-//
-// render
-  render(){
-    if(this.state.loaded == false){
+  //
+  //
+  // render
+  render() {
+    if (this.state.loaded == false) {
       return (
         <View style={styles.containerLoad}>
-          <Spinner color= "#58FAF4"/>
+          <Spinner color="#58FAF4" />
         </View>
       )
     } else {
-          console.log(this.state.searchText)
-      return(
+      console.log(this.state.searchText)
+      return (
         <Container>
-           <Header style={{backgroundColor:'#e67e22'}}>
-                    <Left>
-                        <Button transparent >
-                            <Icon  name='menu' />
-                        </Button>
-                    </Left>
-                    <Body>
-                       
-                    </Body>
-                    <Right>
-                         <Button transparent onPress={()=> this.cartNavigate('Cart', this.props.cartId)}>
-                             <Icon style={{fontSize: 20}}name='shopping-cart'/>
-                        </Button>
-                    </Right>
-           </Header>
-            <Header searchBar rounded  >
-              <Item>
-                  <Icon style={{fontSize: 20, marginLeft: 10}} name="search" />
-                  <Input placeholder="Search"
-                  onChangeText={(text) => this.setState({searchText: text})}
-                  value={this.state.text} />
-                  <Icon  style={{fontSize: 20, marginRight: 10}} active name="people" />
-              </Item>
-              <Button transparent>
-                  <Text>Search</Text>
+          <Header style={{ backgroundColor: '#e67e22' }}>
+            <Left>
+              <Button transparent >
+                <Icon name='menu' />
               </Button>
+            </Left>
+            <Body>
+
+            </Body>
+            <Right>
+              <Button transparent onPress={() => this.cartNavigate('Cart', this.props.cartId)}>
+                <Icon style={{ fontSize: 20 }} name='shopping-cart' />
+              </Button>
+            </Right>
+          </Header>
+          <Header searchBar rounded  >
+            <Item>
+              <Icon style={{ fontSize: 20, marginLeft: 10 }} name="search" />
+              <Input placeholder="Search"
+                onChangeText={(text) => this.setState({ searchText: text })}
+                value={this.state.text} />
+              <Icon style={{ fontSize: 20, marginRight: 10 }} active name="people" />
+            </Item>
+            <Button transparent>
+              <Text>Search</Text>
+            </Button>
           </Header>
           <View style={styles.scrollViewBar}>
             <ScrollView
               horizontal={true}
               automaticallyAdjustContentInsets={false}
               style={[styles.scrollView, styles.horizontalScrollView]}
-              >
+            >
               {this.state.array.map(this.createRow.bind(this))}
             </ScrollView>
           </View>
           <View style={styles.mainContainer}>
 
           </View>
-          
 
-      </Container>
+
+        </Container>
 
       )
     }
@@ -157,51 +157,51 @@ export default class Main extends Component{
 
 }
 var styles = StyleSheet.create({
-  containerLoad:{
-    flex:1, justifyContent:'center', alignItems:'center', //backgroundColor:"#d35400"
+  containerLoad: {
+    flex: 1, justifyContent: 'center', alignItems: 'center', //backgroundColor:"#d35400"
   },
-  container:{
-    flex:1,
+  container: {
+    flex: 1,
   },
-  scrollViewBar:{
+  scrollViewBar: {
     flex: 2.5,
-//backgroundColor:'#2ecc71'
+    //backgroundColor:'#2ecc71'
   },
-  mainContainer:{
+  mainContainer: {
     flex: 9,
-    backgroundColor:'#f1c40f'
+    backgroundColor: '#f1c40f'
   },
-  menubar:{
-    flex:0.5,
-    backgroundColor:'#3498db',
-    marginTop:20,
-    flexDirection:'row'
+  menubar: {
+    flex: 0.5,
+    backgroundColor: '#3498db',
+    marginTop: 20,
+    flexDirection: 'row'
   },
-  scrollView:{height:deviceScreen.height/4, },
-  horizontalScrollView:{height: 150,},
-  card:{
+  scrollView: { height: deviceScreen.height / 4, },
+  horizontalScrollView: { height: 150, },
+  card: {
     paddingTop: 10,
-    alignItems:'center',
+    alignItems: 'center',
     borderRadius: 3,
-    justifyContent :'space-around',
+    justifyContent: 'space-around',
 
   },
-  img:{
-    height: deviceScreen.height/5 -20,
-    width: deviceScreen.height/5-10,
-    justifyContent :'space-around',
-    resizeMode:'center',
+  img: {
+    height: deviceScreen.height / 5 - 20,
+    width: deviceScreen.height / 5 - 10,
+    justifyContent: 'space-around',
+    resizeMode: 'center',
   },
-  menuImg:{
+  menuImg: {
     height: 25,
     width: 25,
-    justifyContent:'flex-start',
+    justifyContent: 'flex-start',
     marginLeft: 10
   },
-  leftMenu:{
-    flex:1 
+  leftMenu: {
+    flex: 1
   },
-  rightMenu:{
+  rightMenu: {
     flex: 5
   }
 

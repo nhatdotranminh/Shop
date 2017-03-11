@@ -1,6 +1,6 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
-  View, Text,TouchableOpacity,Navigator,StyleSheet, Image, TextInput,Dimensions, StatusBar
+  View, Text, TouchableOpacity, Navigator, StyleSheet, Image, TextInput, Dimensions, StatusBar
 } from 'react-native';
 import {
   Spinner, Button
@@ -14,31 +14,38 @@ var deviceScreen = Dimensions.get('window')
 //
 //
 
-class Login extends Component{
-  constructor(props){
+class Login extends Component {
+  constructor(props) {
     super(props)
-    this.state ={
-      userName:'',
-      PassWord:'',
+    this.state = {
+      userName: '',
+      PassWord: '',
     }
   }
-  render(){
-    return(
+  render() {
+    return (
       <View style={styles.container}>
-        <StatusBar hidden='true'/>
-        <Image style={styles.image}   blurRadius={8} source={require('../Images/background.jpg')}>
-          <TextInput placeholder='Username' style={styles.textInput}/>
-          <TextInput placeholder='PassWord' style={styles.textInput}/>
+
+        <Image style={styles.image} blurRadius={8} source={require('../Images/background.jpg')}>
+          <TextInput placeholder='Username' style={styles.textInput} />
+          <TextInput placeholder='PassWord' style={styles.textInput} />
           <View style={styles.buttonView}>
-            <Button block success>
-              <Text>
-                Login
-              </Text>
-            </Button>
+            <View style={styles.signin}>
+              <Button success style={styles.btn}>
+                <Text> Login </Text>
+              </Button>
+            </View>
+
+            <View style={styles.signin}>
+              <Button warning style={styles.btn}>
+                <Text>  Sign in </Text>
+              </Button>
+            </View>
+
           </View>
           <View style={styles.sdk}>
-            <Button style={{backgroundColor:'#2980b9'}}>
-              <Icon name='facebook-with-circle' style={{fontSize: 28, color: 'black', margin: 10}}/>
+            <Button style={{ backgroundColor: '#2980b9' }}>
+              <Icon name='facebook-with-circle' style={{ fontSize: 28, color: 'black', margin: 10 }} />
               <Text>Đăng nhập với Facebook</Text>
             </Button>
           </View>
@@ -48,33 +55,39 @@ class Login extends Component{
   }
 }
 
-var styles= StyleSheet.create({
-  container:{
+var styles = StyleSheet.create({
+  container: {
     flex: 1
   },
-  image:{
-    flex:1,
+  image: {
+    flex: 1,
     height: null,
-    width:null,
-    resizeMode:'cover',
-    justifyContent:'center',
-    alignItems:'center'
-  
+    width: null,
+    resizeMode: 'cover',
+    justifyContent: 'center',
+    alignItems: 'center',
+    //marginTop:20
+
   },
-  textInput:{
+  textInput: {
     height: 40, borderColor: 'gray', borderWidth: 1,
-    width:deviceScreen.width -20,
+    width: deviceScreen.width - 20,
     padding: 10,
     margin: 10
   },
-  buttonView:{
+  buttonView: {
     flexDirection: 'row',
-    justifyContent:'center',
-    alignItems:'center'
+    justifyContent: 'space-between',
+    alignItems: 'center',
+
   },
-  sdk:{
+  sdk: {
+    padding: 10
+  },
+  signin: {
     padding: 10
   }
+
 })
 
-module.exports=Login;
+module.exports = Login;

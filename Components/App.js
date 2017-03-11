@@ -1,4 +1,4 @@
-import React,{Component} from 'react';
+import React, { Component } from 'react';
 import {
   Text, View, Navigator, StyleSheet, TouchableOpacity
 } from 'react-native';
@@ -16,33 +16,33 @@ import Cart from './Cart'
 import navigationHelper from './navigation';
 console.disableYellowBox = true;
 
-export default class APP extends Component{
-  
-  _renderScene(route, navigator){
-    switch(route.id){
+export default class APP extends Component {
+
+  _renderScene(route, navigator) {
+    switch (route.id) {
       case 'Main':
-        return(<Main navigator={navigator}{...route.passProps}/>)
+        return (<Main navigator={navigator}{...route.passProps} />)
       case 'LaptopProducts':
-        return(<LaptopProducts navigator={navigator}{...route.passProps}/>)
+        return (<LaptopProducts navigator={navigator}{...route.passProps} />)
       case 'Login':
-        return(<Login navigator={navigator}{...route.passProps}/>)
+        return (<Login navigator={navigator}{...route.passProps} />)
       case 'Detail':
-        return(<Detail navigator={navigator}{...route.passProps}/>)
+        return (<Detail navigator={navigator}{...route.passProps} />)
       case 'Cart':
-        return(<Cart navigator={navigator}{...route.passProps}/>)
-      case 'Pay': 
-        return(<Pay navigator={navigator}{...route.passProps}/>)
-      
+        return (<Cart navigator={navigator}{...route.passProps} />)
+      case 'Pay':
+        return (<Pay navigator={navigator}{...route.passProps} />)
+
     }
 
   }
-  constructor(props){
+  constructor(props) {
     super(props)
-    this.state={
+    this.state = {
 
       drawerType: 'overlay',
-      openDrawerOffset:0.2,
-      closedDrawerOffset:-3,
+      openDrawerOffset: 0.2,
+      closedDrawerOffset: -3,
       panOpenMask: 0.2,
       panCloseMask: .9,
       relativeDrag: false,
@@ -60,15 +60,15 @@ export default class APP extends Component{
       rightSide: false,
     }
   }
-  openDrawer(){
+  openDrawer() {
     this.drawer.open()
   }
-  
-  render(){
-     
-    return(
+
+  render() {
+
+    return (
       <Drawer
-      //  open='true'
+        //  open='true'
         ref={(ref) => this.drawer = ref}
         type={this.state.drawerType}
         animation={this.state.animation}
@@ -79,14 +79,14 @@ export default class APP extends Component{
         relativeDrag={this.state.relativeDrag}
         panThreshold={this.state.panThreshold}
         content={<Menu navigate={(route) => {
-                    this._navigator.push(navigationHelper(route));
-                    this.drawer.close()
-                }}/>}
+          this._navigator.push(navigationHelper(route));
+          this.drawer.close()
+        }} />}
         styles={drawerStyles}
         disabled={this.state.disabled}
         tweenHandler={(ratio) => ({
-                    main: { opacity:(2-ratio)/2 }
-                })}
+          main: { opacity: (2 - ratio) / 2 }
+        })}
         tweenDuration={this.state.tweenDuration}
         tweenEasing={this.state.tweenEasing}
         acceptDoubleTap={this.state.acceptDoubleTap}
@@ -96,18 +96,18 @@ export default class APP extends Component{
         negotiatePan={this.state.negotiatePan}
         changeVal={this.state.changeVal}
         side={this.state.rightSide ? 'right' : 'left'}
-        >
-                <Navigator
-                    ref={(ref) => this._navigator = ref}
-                    configureScene={(route) => Navigator.SceneConfigs.FloatFromLeft}
-                    initialRoute={{
-                        id: 'Main',
-                        index: 0
-                    }}
-                    renderScene={(route, navigator) => this._renderScene(route, navigator)}
-                    
-                />
-         </Drawer>
+      >
+        <Navigator
+          ref={(ref) => this._navigator = ref}
+          configureScene={(route) => Navigator.SceneConfigs.FloatFromLeft}
+          initialRoute={{
+            id: 'Main',
+            index: 0
+          }}
+          renderScene={(route, navigator) => this._renderScene(route, navigator)}
+
+        />
+      </Drawer>
     );
   }
 }
@@ -118,13 +118,13 @@ const drawerStyles = {
     shadowRadius: 3
   }
 }
-  
-const styles= StyleSheet.create({
+
+const styles = StyleSheet.create({
   container: {
-        flex: 1,
-        justifyContent: 'center'
-    },
-    
+    flex: 1,
+    justifyContent: 'center'
+  },
+
 })
 
 
