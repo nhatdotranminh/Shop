@@ -55,7 +55,7 @@ export default class Cart extends Component {
 
     }
     getRef() {
-        return firebaseApp.ref();
+        return firebaseApp.database().ref();
     }
     navigate(routename, cartid) {
         this.props.navigator.push({
@@ -76,7 +76,7 @@ export default class Cart extends Component {
 
     }
     deleteProduct(CID, price) {
-        firebaseApp.ref('Cart/' + this.props.cartId + '/' + CID).remove()
+        firebaseApp.database().ref('Cart/' + this.props.cartId + '/' + CID).remove()
 
         Total = Total - (price + (price * 10 / 100))
         this.setState({

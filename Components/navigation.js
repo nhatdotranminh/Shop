@@ -26,6 +26,10 @@ module.exports = function (scene) {
         'Pay':{
             title:'Pay',
             id:'Pay'
+        },
+        'Resgister':{
+            title:'Resgister',
+            id:'Resgister'
         }
     }
 

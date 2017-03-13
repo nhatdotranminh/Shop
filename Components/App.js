@@ -12,6 +12,8 @@ import Login from './Login';
 import LaptopProducts from './LaptopProducts'
 import Detail from './Detail'
 import Cart from './Cart'
+import Pay from './Pay'
+import Resgister from './Resgister'
 
 import navigationHelper from './navigation';
 console.disableYellowBox = true;
@@ -32,6 +34,8 @@ export default class APP extends Component {
         return (<Cart navigator={navigator}{...route.passProps} />)
       case 'Pay':
         return (<Pay navigator={navigator}{...route.passProps} />)
+      case 'Resgister':
+        return (<Resgister navigator={navigator}{...route.passProps} />)
 
     }
 

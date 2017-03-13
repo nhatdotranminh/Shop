@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {
-    Text, View, StyleSheetß
+    Text, View, StyleSheet
 } from 'react-native';
 import {
     Container, Header, Title, Button, Left, Right, Body

@@ -35,8 +35,8 @@ export default class LaptopProducts extends Component {
         this.itemsRef = this.getRef().child('Laptop/Brand/' + this.props.brandName + '/Products');
         this.navigate = this.navigate.bind(this);
     }
-    getRef() {
-        return firebaseApp.ref();
+       getRef() {
+        return firebaseApp.database().ref();
     }
     componentWillMount() {
         this.itemsRef.on('value', (snap) => {

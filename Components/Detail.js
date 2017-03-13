@@ -25,7 +25,7 @@ import firebaseApp from './firebase';
 // bien
 var deviceScreen = Dimensions.get('window')
 
-var newPostKey = firebaseApp.ref().child('Cart').push().key;
+var newPostKey = firebaseApp.database().ref().child('Cart').push().key;
 var arrImg = []
 //
 
@@ -44,7 +44,7 @@ export default class Detail extends Component {
         this.chooseImage = this.chooseImage.bind(this)
     }
     getRef() {
-        return firebaseApp.ref();
+        return firebaseApp.database().ref();
     }
     componentWillMount() {
         this.viewDetailRef.on('value', (snap) => {
@@ -85,16 +85,16 @@ export default class Detail extends Component {
     orderNavigate(routename, name, price, image, cartId) {
         var date = new Date().toDateString()
         if (this.props.cartId === this.state.newCartId) {
-            let childId = firebaseApp.ref().child('Cart/' + this.props.cartId).push().key;
-            firebaseApp.ref('/Cart/' + this.props.cartId + '/' + childId).update({
+            let childId = this.getRef().child('Cart/' + this.props.cartId).push().key;
+            firebaseApp.database().ref('/Cart/' + this.props.cartId + '/' + childId).update({
                 ProductName: name,
                 Price: price,
                 Image: image,
                 Ngaynhap: date
             });
         } else {
-            var Childkey = firebaseApp.ref().child('Cart/' + newPostKey).push().key;
-            firebaseApp.ref('/Cart/' + newPostKey + '/' + Childkey).set({
+            var Childkey = this.getRef().child('Cart/' + newPostKey).push().key;
+            firebaseApp.database().ref('/Cart/' + newPostKey + '/' + Childkey).set({
                 ProductName: name,
                 Price: price,
                 Image: image,

@@ -47,9 +47,9 @@ export default class Main extends Component {
     this.cartNavigate = this.cartNavigate.bind(this)
 
   }
-  getRef() {
-    return firebaseApp.ref();
-  }
+    getRef() {
+        return firebaseApp.database().ref();
+    }
   componentWillMount() {
     this.itemsRef.on('value', (dataSnapShot) => {
       dataSnapShot.forEach((child) => {
