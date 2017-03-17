@@ -10,7 +10,7 @@ import {
   Icon, Button, Thumbnail
 } from 'native-base'
 //
-import firebaseApp from './firebase'
+import firebaseApp from '../Help/firebase';
 //
 
 import Login from './Login'
@@ -66,6 +66,7 @@ export default class Menu extends Component {
     }).catch(function (error) {
       // An error happened.
     });
+    alert('Ban da logout')
   }
 
 

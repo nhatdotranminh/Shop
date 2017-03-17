@@ -4,7 +4,7 @@ import {
   
 } from 'react-native';
 
-import App from './Components/App'
+import App from './Index/App'
 
 //let _emitter = new EventEmitter();
 // Class chinh

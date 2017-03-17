@@ -9,7 +9,8 @@ import {
   Dimensions,
   Image,
   TouchableOpacity,
-  TextInput
+  TextInput,
+  StatusBar
 } from 'react-native';
 // bo thu vien nativebase.io
 import {
@@ -22,7 +23,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import LaptopProducts from './LaptopProducts'
 //var draScene =require('./drawerScene');
 // config firebase
-import firebaseApp from './firebase'
+import firebaseApp from '../Help/firebase';
 
 //
 //
@@ -47,9 +48,9 @@ export default class Main extends Component {
     this.cartNavigate = this.cartNavigate.bind(this)
 
   }
-    getRef() {
-        return firebaseApp.database().ref();
-    }
+  getRef() {
+    return firebaseApp.database().ref();
+  }
   componentWillMount() {
     this.itemsRef.on('value', (dataSnapShot) => {
       dataSnapShot.forEach((child) => {
@@ -106,10 +107,10 @@ export default class Main extends Component {
       console.log(this.state.searchText)
       return (
         <Container>
-          <Header style={{ backgroundColor: '#e67e22' }}>
+          <Header style={{ backgroundColor: '#34495e' }}>
             <Left>
               <Button transparent >
-                <Icon name='menu' />
+                <Text> Menu </Text>
               </Button>
             </Left>
             <Body>
@@ -117,7 +118,7 @@ export default class Main extends Component {
             </Body>
             <Right>
               <Button transparent onPress={() => this.cartNavigate('Cart', this.props.cartId)}>
-                <Icon style={{ fontSize: 20 }} name='shopping-cart' />
+                <Icon style={{ color: '#2980b9', fontSize: 20 }} name='shopping-cart' />
               </Button>
             </Right>
           </Header>
@@ -163,6 +164,7 @@ var styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+
   scrollViewBar: {
     flex: 2.5,
     //backgroundColor:'#2ecc71'

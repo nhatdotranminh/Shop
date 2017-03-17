@@ -18,7 +18,7 @@ import {
 import Detail from './Detail'
 // firebase config
 //
-import firebaseApp from './firebase';
+import firebaseApp from '../Help/firebase';
 //
 //
 // bien
@@ -35,7 +35,7 @@ export default class LaptopProducts extends Component {
         this.itemsRef = this.getRef().child('Laptop/Brand/' + this.props.brandName + '/Products');
         this.navigate = this.navigate.bind(this);
     }
-       getRef() {
+    getRef() {
         return firebaseApp.database().ref();
     }
     componentWillMount() {
@@ -87,14 +87,15 @@ export default class LaptopProducts extends Component {
     render() {
         return (
             <View style={styles.container}>
-                <Header style={{ backgroundColor: '#e67e22' }}>
+
+                <Header style={{ backgroundColor: '#34495e' }}>
                     <Left>
                         <Button transparent onPress={() => this.props.navigator.pop()}>
-                            <Icon style={{ fontSize: 20 }} name='arrow-back' />
+                            <Text style={{ color: '#2980b9', fontSize: 18 }}>Back</Text>
                         </Button>
                     </Left>
                     <Body>
-                        <Title>{this.props.brandName}</Title>
+                        <Title style={{ color: 'white' }}>{this.props.brandName}</Title>
                     </Body>
                     <Right>
 
@@ -142,5 +143,5 @@ const styles = StyleSheet.create({
     },
     nameText: {
         fontSize: 16, //color: 'white'
-    }
+    },
 })

@@ -11,11 +11,11 @@ import Icon from 'react-native-vector-icons/Entypo';
 //
 //
 const firebase = require('firebase');
-import firebaseApp from './firebase'
+import firebaseApp from '../Help/firebase';
 //
 var deviceScreen = Dimensions.get('window')
 var provider = new firebase.auth.FacebookAuthProvider();
-
+var usemail = '';
 
 provider.setCustomParameters({
   'display': 'popup'
@@ -31,32 +31,30 @@ class Login extends Component {
       email: "",
       password: "",
       loginstatus: false,
-      useremail:''
+      useremail: ''
 
     }
     this.btnLoginPressed = this.btnLoginPressed.bind(this);
   }
-  componentWillMount() {
-    firebase.auth().onAuthStateChanged(function (user) {
-      if (user) {
-        console.log(user.email)
-         this.setState({
-          loginstatus: true,
-          useremail: user.email
-        }) 
-      }
-     
-      else {
-        this.setState({
-          loginstatus: false
-        })
-      }
-    });
+  conponentDidMount() {
+    if (usemail != '') {
+      this.setState({
+        loginstatus: true,
+        useremail: usemail
+      })
+    } else {
+      this.setState({
+        loginstatus: false
+
+      })
+    }
+    usemail = '';
+   
   }
+
   // login firebase email and password
   btnLoginPressed(email, password) {
     firebaseApp.auth().signInWithEmailAndPassword(email, password)
-      .then(user => this.navigator.pop())
       .catch(function (error) {
         // handle error
         var errorCode = error.code;
@@ -67,26 +65,17 @@ class Login extends Component {
           console.log('Sign in Error:' + errorMessage);
         }
       })
-
-  }
-  fbLogin() {
-    firebaseApp.auth().signInWithPopup(provider).then(function (result) {
-      // This gives you a Facebook Access Token. You can use it to access the Facebook API.
-      var token = result.credential.accessToken;
-      // The signed-in user info.
-      var user = result.user;
-      // ...
-    }).catch(function (error) {
-      // Handle Errors here.
-      var errorCode = error.code;
-      var errorMessage = error.message;
-      // The email of the user's account used.
-      var email = error.email;
-      // The firebase.auth.AuthCredential type that was used.
-      var credential = error.credential;
-      // ...
+    firebase.auth().onAuthStateChanged(function (user) {
+      if (user != null) {
+        usemail = user.email
+        console.log(user.uid)
+        
+      }
+      else {
+        console.log('not logged in')
+      }
     });
-    console.log('button has been pressed')
+
   }
 
   navigate(routeid) {
@@ -103,7 +92,7 @@ class Login extends Component {
         </View>
       )
     } else {
-      console.log("not login")
+
       return (
         <View style={styles.container}>
 
@@ -113,6 +102,8 @@ class Login extends Component {
               style={styles.textInput}
               value={this.state.email}
               placeholderTextColor='black'
+              autoCorrect={false}
+              autoFocus={true}
 
             />
             <TextInput placeholder='PassWord'
@@ -121,6 +112,8 @@ class Login extends Component {
               style={styles.textInput}
               value={this.state.password}
               placeholderTextColor='black'
+              autoCorrect={false}
+              autoFocus={false}
             />
             <View style={styles.buttonView}>
               <View style={styles.signin}>

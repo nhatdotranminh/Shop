@@ -19,13 +19,14 @@ import Cart from './Cart'
 
 // firebase config
 //
-import firebaseApp from './firebase';
+import firebaseApp from '../Help/firebase';
 //
 //
 // bien
 var deviceScreen = Dimensions.get('window')
-
+// tạo Mã mới cho 1 phiên làm việc với giỏ hàng
 var newPostKey = firebaseApp.database().ref().child('Cart').push().key;
+// mảng lưu ảnh chi tiết sản phẩm
 var arrImg = []
 //
 
@@ -38,6 +39,7 @@ export default class Detail extends Component {
             newCartId: newPostKey
 
         }
+        // query firebase
         this.itemRef = this.getRef().child('Laptop/Brand/' + this.props.brandName + '/Products/' + this.props.productName)
         this.viewDetailRef = this.getRef().child('Image/' + this.props.productName)
         this.orderNavigate = this.orderNavigate.bind(this)
@@ -47,6 +49,7 @@ export default class Detail extends Component {
         return firebaseApp.database().ref();
     }
     componentWillMount() {
+        // load ảnh từ firebase về và gán vào mảng ảnh arrimg sau đó set state arr 
         this.viewDetailRef.on('value', (snap) => {
             var count = snap.numChildren()
             for (i = 1; i < count; i++) {
@@ -62,6 +65,7 @@ export default class Detail extends Component {
         })
     }
     renderRow(properties) {
+        // thay đổi hình ảnh
         return (
             <TouchableOpacity style={styles.card}
                 onPress={() => this.chooseImage(properties.image)} >
@@ -74,6 +78,7 @@ export default class Detail extends Component {
             uriImage: image
         })
     }
+    //
     navigate(routename, cartId) {
         this.props.navigator.push({
             id: routename,
@@ -84,6 +89,12 @@ export default class Detail extends Component {
     }
     orderNavigate(routename, name, price, image, cartId) {
         var date = new Date().toDateString()
+        // kiểm tra tương thích ID của các phiên làm việc với giỏ hàng
+        // nêu đúng thì tiếp tục 
+        // ko đúng thì bắt đầu tạo 1 phiên làm việc mới
+        // mỗi phiên làm việc có nhiều ID con mỗi ID con tương ứng 1 món hàng thêm vào giỏ hàng
+        // biên props.cartId luôn bằng với state.newCartId trong khi chưỏng trình chưa kết thúc
+        // mỗi khi mở chương trình chỉ có 1 biến newPostKey được tạo 
         if (this.props.cartId === this.state.newCartId) {
             let childId = this.getRef().child('Cart/' + this.props.cartId).push().key;
             firebaseApp.database().ref('/Cart/' + this.props.cartId + '/' + childId).update({
@@ -124,18 +135,18 @@ export default class Detail extends Component {
     render() {
         return (
             <Container>
-                <Header style={{ backgroundColor: '#e67e22' }}>
+                <Header style={{ backgroundColor: '#34495e' }}>
                     <Left>
                         <Button transparent onPress={() => this.props.navigator.pop()}>
-                            <Icon style={{ fontSize: 20 }} name='arrow-back' />
+                            <Text style={{ color: '#2980b9', fontSize: 18 }}>Back</Text>
                         </Button>
                     </Left>
                     <Body>
-                        <Title></Title>
+                        <Title style={{ color: 'white' }}>{this.props.brandName}</Title>
                     </Body>
                     <Right>
                         <Button transparent onPress={() => this.navigate('Cart', this.state.newCartId)}>
-                            <Icon style={{ fontSize: 20 }} name='shopping-cart' />
+                            <Icon style={{ color: '#2980b9', fontSize: 20 }} name='shopping-cart' />
                         </Button>
                     </Right>
                 </Header>
@@ -148,7 +159,7 @@ export default class Detail extends Component {
                                         {this.props.productName}
                                     </Text>
                                     <Text style={styles.price}>
-                                        {this.props.price.toFixed(3).replace(/(\d)(?=(\d{3})+\.)/g, '$1,')} VNĐ
+                                        {this.props.price.toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,")} VNĐ
                                         </Text>
                                 </View>
                                 <View style={styles.imgContainer}>

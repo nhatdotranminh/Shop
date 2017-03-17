@@ -10,7 +10,7 @@ import {
 import Icon from 'react-native-vector-icons/Entypo';
 //
 //
-import firebaseApp from './firebase'
+import firebaseApp from '../Help/firebase';
 //
 var deviceScreen = Dimensions.get('window')
 //

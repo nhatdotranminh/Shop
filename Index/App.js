@@ -6,19 +6,19 @@ import {
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Drawer from 'react-native-drawer';
 // import sceen
-import Menu from './Menu';
-import Main from './Main';
-import Login from './Login';
-import LaptopProducts from './LaptopProducts'
-import Detail from './Detail'
-import Cart from './Cart'
-import Pay from './Pay'
-import Resgister from './Resgister'
+import Menu from '../Components/Menu';
+import Main from '../Components/Main';
+import Login from '../Components/Login';
+import LaptopProducts from '../Components/LaptopProducts'
+import Detail from '../Components/Detail'
+import Cart from '../Components/Cart'
+import Pay from '../Components/Pay'
+import Resgister from '../Components/Resgister'
 
-import navigationHelper from './navigation';
+import navigationHelper from '../Help/navigation';
 console.disableYellowBox = true;
 
-export default class APP extends Component {
+export default class App extends Component {
 
   _renderScene(route, navigator) {
     switch (route.id) {

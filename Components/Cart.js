@@ -8,18 +8,20 @@ import {
     Navigator,
     Image,
     StyleSheet,
-    Alert
+    Alert,
+
 } from 'react-native';
 import {
     Container, Header, Title, Button, Left, Right, Body, Footer
 } from 'native-base'
 import Icon from 'react-native-vector-icons/MaterialIcons';
+
 // import screen
 //
 import Pay from './Pay'
 // firebase config
 //
-import firebaseApp from './firebase';
+import firebaseApp from '../Help/firebase';
 //
 //
 // bien
@@ -30,7 +32,12 @@ var Demso = 0
 
 var arr = [];
 
-//
+/* set biến tổng giá = 0 ,
+ nếu ko có sản phẩm được chọn từ detail tổng giá vẫn bằng 0 
+ ngược lại nếu có thì tính tổng giá sau đó cộng dồn tổng giá 
+ để được biến tổng(tổng thành tiền sau khi đã cộng trừ thêm thuế và khuyến mãi )= Total
+ Set state cho biến sum = total state sum thay đổi mỗi lần total thay đổi
+ */
 
 export default class Cart extends Component {
     constructor(props) {
@@ -39,7 +46,8 @@ export default class Cart extends Component {
             dataSource: new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 }),
             Sum: '',
             childkey: '',
-            dem: ''
+            dem: '',
+
         }
         this.itemRef = this.getRef().child('Cart/' + this.props.cartId)
         this.valRef = this.getRef().child('Thamso/')
@@ -54,6 +62,7 @@ export default class Cart extends Component {
         Total += Tonggia
 
     }
+    // firebase config
     getRef() {
         return firebaseApp.database().ref();
     }
@@ -76,8 +85,9 @@ export default class Cart extends Component {
 
     }
     deleteProduct(CID, price) {
+        // xoá sản phẩm được chọn trên firebase
         firebaseApp.database().ref('Cart/' + this.props.cartId + '/' + CID).remove()
-
+        // trừ tổng tiền cần thah toán set lại state 
         Total = Total - (price + (price * 10 / 100))
         this.setState({
             Sum: Total,
@@ -86,6 +96,7 @@ export default class Cart extends Component {
     }
 
     componentWillMount() {
+        // load thông tin giỏ hàng từ firebase
         this.itemRef.on('value', (snap) => {
             var count = snap.numChildren()
             snap.forEach((child) => {
@@ -94,7 +105,8 @@ export default class Cart extends Component {
             this.setState({
                 dataSource: this.state.dataSource.cloneWithRows(arr),
                 Sum: Total,
-                dem: count
+                dem: count,
+
 
             })
             Demso = count
@@ -115,7 +127,11 @@ export default class Cart extends Component {
                         <Image source={{ uri: property.image }} style={styles.img} />
                     </View>
                     <View style={styles.priceView}>
-                        <Text style={styles.proName}>Đơn giá: {property.price.toFixed(3).replace(/(\d)(?=(\d{3})+\.)/g, '$1,')} VNĐ</Text>
+                        <Text style={styles.proName}>
+                            Đơn giá:  {property.price.toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,")} VNĐ
+                        </Text>
+                    </View>
+                    <View style={styles.deleteBtn}>
                         <Button transparent onPress={() => Alert.alert(
                             'Xoá Sản phẩm khỏi giỏ hàng',
                             'Bạn có muốn xoá sản phẩm ' + property.name + ' khỏi giỏ hàng',
@@ -127,6 +143,7 @@ export default class Cart extends Component {
                         )}>
                             <Icon style={{ fontSize: 20 }} name='delete' />
                         </Button>
+
                     </View>
                 </View>
             </View>
@@ -138,21 +155,22 @@ export default class Cart extends Component {
     render() {
         console.log(this.state.Sum)
         console.log('Tong giá' + Total)
+        // Nêu giỏ hàng trống load màn hình này
         if (Total == 0) {
             return (
                 <Container>
-                    <Header style={{ backgroundColor: '#e67e22' }}>
+                    <Header style={{ backgroundColor: '#34495e' }}>
                         <Left>
                             <Button transparent onPress={() => this.props.navigator.pop()}>
-                                <Icon style={{ fontSize: 20 }} name='arrow-back' />
+                                <Text style={styles.iconStyle}>Back</Text>
                             </Button>
                         </Left>
                         <Body>
-                            <Text>Giỏ hàng </Text>
+                            <Title style={{ color: 'white' }}>Giỏ hàng</Title>
                         </Body>
                         <Right>
                             <Button transparent onPress={() => this.navigate('Main', this.props.cartId)}>
-                                <Icon style={{ fontSize: 20 }} name='home' />
+                                <Icon style={styles.iconStyle} name='home' />
                             </Button>
                         </Right>
                     </Header>
@@ -162,7 +180,9 @@ export default class Cart extends Component {
 
 
                     <View style={styles.Tonggia}>
-                        <Text style={{ fontSize: 20, fontWeigth: 'bold' }}>Tổng số ước tính : {this.state.Sum} VNĐ</Text>
+                        <Text style={{ fontSize: 20, fontWeigth: 'bold' }}>
+                            Tổng số ước tính : {this.state.Sum} VNĐ
+                        </Text>
 
                     </View>
 
@@ -173,21 +193,22 @@ export default class Cart extends Component {
                     </Footer>
                 </Container>
             );
+            // nếu giỏ hàng có hàng load màn hình này
         } else {
             return (
                 <Container>
-                    <Header style={{ backgroundColor: '#e67e22' }}>
+                    <Header style={{ backgroundColor: '#34495e' }}>
                         <Left>
                             <Button transparent onPress={() => this.props.navigator.pop()}>
-                                <Icon style={{ fontSize: 20 }} name='arrow-back' />
+                                <Text style={styles.iconStyle}>Back</Text>
                             </Button>
                         </Left>
                         <Body>
-                            <Text>Giỏ hàng({this.state.dem})</Text>
+                            <Title style={{ color: 'white' }}>Giỏ hàng({this.state.dem})</Title>
                         </Body>
                         <Right>
                             <Button transparent onPress={() => this.navigate('Main', this.props.cartId)}>
-                                <Icon style={{ fontSize: 20 }} name='home' />
+                                <Icon style={styles.iconStyle} name='home' />
                             </Button>
                         </Right>
                     </Header>
@@ -199,7 +220,9 @@ export default class Cart extends Component {
 
                     <View style={styles.Tonggia}>
 
-                        <Text style={{ fontSize: 20, fontWeigth: 'bold' }}>Tổng số ước tính : {this.state.Sum} VNĐ</Text>
+                        <Text style={{ fontSize: 20, fontWeigth: 'bold' }}>
+                            Tổng số ước tính : {this.state.Sum.toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,")} VNĐ
+                        </Text>
                         <Text style={{ color: 'gray', fontSize: 16 }}>Bao gồm VAT 10%</Text>
                     </View>
 
@@ -276,6 +299,10 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center'
+    },
+    deleteBtn: { flex: 0.5 },
+    iconStyle: {
+        color: '#2980b9', fontSize: 18
     }
 
 
