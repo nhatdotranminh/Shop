@@ -96,21 +96,23 @@ export default class Detail extends Component {
         // biên props.cartId luôn bằng với state.newCartId trong khi chưỏng trình chưa kết thúc
         // mỗi khi mở chương trình chỉ có 1 biến newPostKey được tạo 
         if (this.props.cartId === this.state.newCartId) {
-            let childId = this.getRef().child('Cart/' + this.props.cartId).push().key;
-            firebaseApp.database().ref('/Cart/' + this.props.cartId + '/' + childId).update({
+            let childId = this.getRef().child('Cart/' + this.props.cartId+'/Hanghoa/').push().key;
+            firebaseApp.database().ref('/Cart/' + this.props.cartId + '/Hanghoa/' + childId).update({
                 ProductName: name,
                 Price: price,
                 Image: image,
                 Ngaynhap: date
             });
         } else {
-            var Childkey = this.getRef().child('Cart/' + newPostKey).push().key;
-            firebaseApp.database().ref('/Cart/' + newPostKey + '/' + Childkey).set({
+            var Childkey = this.getRef().child('/Cart/' + newPostKey + '/Hanghoa/').push().key;
+            firebaseApp.database().ref('/Cart/' + newPostKey + '/Hanghoa/' + Childkey).set({
                 ProductName: name,
                 Price: price,
                 Image: image,
                 Ngaynhap: date
             });
+
+
         }
         console.log('Detail' + this.state.newCartId)
 
@@ -122,12 +124,7 @@ export default class Detail extends Component {
                 price: price
             }
         })
-        Toast.show({
-            text: 'Thêm vào giỏ hàng thành công',
-            position: 'bottom',
-            buttonText: 'Okay'
-
-        })
+       
 
     }
 

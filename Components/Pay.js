@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {
-    Text, View, StyleSheet, Dimensions, TextInput
+    Text, View, StyleSheet, Dimensions, TextInput, Alert
 } from 'react-native';
 import {
     Container, Header, Title, Button, Left, Right, Body, Picker, Content
@@ -13,6 +13,7 @@ import firebaseApp from '../Help/firebase';
 //
 var deviceScreen = Dimensions.get('window')
 const Item = Picker.Item
+var newOrderPostkey = firebaseApp.database().ref().child('Inforcustomer').push().key;
 //
 
 export default class Pay extends Component {
@@ -35,19 +36,53 @@ export default class Pay extends Component {
             selected1: value
         });
     }
+    submitinfo(name, email, address, phone, totalcharge, cartID) {
+        if (name == '' || address == '' || phone == '' || address == '') {
+            Alert.alert(
+                'Thông báo',
+                'Bạn chưa nhập thông tin. Vui lòng điền đầy đủ thông tin để xác nhận mua hàng',
+                [
+                    { text: 'OK', onPress: () => console.log('OK Pressed') },
+                ],
+                { cancelable: false }
+            )
+        } else {
+            var date = new Date().toDateString()
+            firebaseApp.database().ref('Inforcustomer/' + newOrderPostkey).set({
+                UID: '',
+                CartID: cartID,
+                FULLNAME: name,
+                EMAIL: email,
+                ADDRESS: address,
+                PHONE: phone,
+                NGAYORDER: date,
+                TONGTIEN: totalcharge
+            })
+            firebaseApp.database().ref('Cart/' + this.props.cartId + '/Trangthai/').update({
+                Status: 'Đã xác nhận'
+            })
+            Toast.show({
+                text: 'Thanh toán thành công vui lòng kiểm tra Email',
+                position: 'bottom',
+                buttonText: 'Okay'
+
+            })
+        }
+
+    }
 
     render() {
         return (
             <Container>
-                
+
                 <Header style={{ backgroundColor: '#34495e' }}>
                     <Left>
                         <Button transparent onPress={() => this.props.navigator.pop()}>
-                            <Text style={{color:'#2980b9', fontSize: 18}}>Back</Text>
+                            <Text style={{ color: '#2980b9', fontSize: 18 }}>Back</Text>
                         </Button>
                     </Left>
                     <Body>
-                        <Title style={{color: 'white'}}>Thanh toán</Title>
+                        <Title style={{ color: 'white' }}>Thanh toán</Title>
                     </Body>
                     <Right>
 
@@ -78,6 +113,7 @@ export default class Pay extends Component {
                         autoCorrect={false}
                         autoFocus={true}
 
+
                     />
                     <TextInput placeholder='Email'
                         onChangeText={(text) => this.setState({ email: text })}
@@ -86,6 +122,8 @@ export default class Pay extends Component {
                         placeholderTextColor='gray'
                         autoCorrect={false}
                         keyboardType='email-address'
+                        autoCapitalize='sentences'
+
                     />
                     <TextInput placeholder='Địa chỉ'
                         onChangeText={(text) => this.setState({ address: text })}
@@ -93,7 +131,7 @@ export default class Pay extends Component {
                         value={this.state.address}
                         placeholderTextColor='gray'
                         autoCorrect={false}
-
+                        autoCapitalize='sentences'
 
                     />
                     <TextInput placeholder='Your phone number'
@@ -103,9 +141,10 @@ export default class Pay extends Component {
                         placeholderTextColor='gray'
                         autoCorrect={false}
                         keyboardType='phone-pad'
+                        autoCapitalize='sentences'
 
                     />
-                    <Button full success>
+                    <Button full success onPress={() => this.submitinfo(this.state.fullname, this.state.email, this.state.address, this.state.phone, this.props.Totalcharge, this.props.cartId)}>
                         <Text> Xác nhận </Text>
                     </Button>
                 </Content>

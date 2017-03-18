@@ -49,9 +49,11 @@ export default class Cart extends Component {
             dem: '',
 
         }
-        this.itemRef = this.getRef().child('Cart/' + this.props.cartId)
+        this.itemRef = this.getRef().child('Cart/' + this.props.cartId + '/Hanghoa/')
         this.valRef = this.getRef().child('Thamso/')
-
+         firebaseApp.database().ref('Cart/' + this.props.cartId + '/Trangthai/').set({
+            Status: 'Chưa xử lí'
+        })       
 
         if (this.props.price == null) {
             Tonggia = 0;
@@ -60,33 +62,26 @@ export default class Cart extends Component {
         }
         console.log('Cart ID la' + this.props.cartId)
         Total += Tonggia
+        this.navigate= this.navigate.bind(this)
 
     }
     // firebase config
     getRef() {
         return firebaseApp.database().ref();
     }
-    navigate(routename, cartid) {
+    navigate(routename, cartid, total) {
         this.props.navigator.push({
             id: routename,
             passProps: {
-                cartId: cartid
-            }
-        })
-
-    }
-    payNavigate(routeid, tong) {
-        this.props.navigator.push({
-            id: routeid,
-            passProps: {
-                Tongthanhtoan: tong
+                cartId: cartid,
+                Totalcharge: total
             }
         })
 
     }
     deleteProduct(CID, price) {
         // xoá sản phẩm được chọn trên firebase
-        firebaseApp.database().ref('Cart/' + this.props.cartId + '/' + CID).remove()
+        firebaseApp.database().ref('Cart/' + this.props.cartId + '/Hanghoa/' + CID).remove()
         // trừ tổng tiền cần thah toán set lại state 
         Total = Total - (price + (price * 10 / 100))
         this.setState({
@@ -109,6 +104,7 @@ export default class Cart extends Component {
 
 
             })
+            console.log(count)
             Demso = count
             Tonggia = 0;
             arr = []
@@ -169,7 +165,7 @@ export default class Cart extends Component {
                             <Title style={{ color: 'white' }}>Giỏ hàng</Title>
                         </Body>
                         <Right>
-                            <Button transparent onPress={() => this.navigate('Main', this.props.cartId)}>
+                            <Button transparent onPress={() => this.navigate('Main', this.props.cartId, '')}>
                                 <Icon style={styles.iconStyle} name='home' />
                             </Button>
                         </Right>
@@ -207,7 +203,7 @@ export default class Cart extends Component {
                             <Title style={{ color: 'white' }}>Giỏ hàng({this.state.dem})</Title>
                         </Body>
                         <Right>
-                            <Button transparent onPress={() => this.navigate('Main', this.props.cartId)}>
+                            <Button transparent onPress={() => this.navigate('Main', this.props.cartId, '')}>
                                 <Icon style={styles.iconStyle} name='home' />
                             </Button>
                         </Right>
@@ -227,7 +223,7 @@ export default class Cart extends Component {
                     </View>
 
                     <Footer>
-                        <Button full success onPress={() => this.payNavigate('Pay', this.state.Sum)}>
+                        <Button full success onPress={() => this.navigate('Pay', this.props.cartId, this.state.Sum)}>
                             <Text>TIẾN HÀNH THANH TOÁN</Text>
                         </Button>
                     </Footer>

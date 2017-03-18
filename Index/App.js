@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {
-  Text, View, Navigator, StyleSheet, TouchableOpacity
+  Text, View, Navigator, StyleSheet, TouchableOpacity, StatusBar
 } from 'react-native';
 
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -101,6 +101,10 @@ export default class App extends Component {
         changeVal={this.state.changeVal}
         side={this.state.rightSide ? 'right' : 'left'}
       >
+        <StatusBar
+          backgroundColor="white"
+          barStyle="light-content"
+        />
         <Navigator
           ref={(ref) => this._navigator = ref}
           configureScene={(route) => Navigator.SceneConfigs.FloatFromLeft}

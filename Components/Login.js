@@ -104,8 +104,7 @@ class Login extends Component {
               placeholderTextColor='black'
               autoCorrect={false}
               autoFocus={true}
-
-            />
+              />
             <TextInput placeholder='PassWord'
               onChangeText={(text) => this.setState({ password: text })}
               secureTextEntry={true}
