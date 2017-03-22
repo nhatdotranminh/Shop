@@ -42,6 +42,7 @@ var arr = [];
 export default class Cart extends Component {
     constructor(props) {
         super(props)
+        // state first
         this.state = {
             dataSource: new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 }),
             Sum: '',
@@ -49,12 +50,17 @@ export default class Cart extends Component {
             dem: '',
 
         }
+         firebaseApp.database().ref('Cart/' + this.props.cartId + '/Trangthai/').set({
+            Status: 'Chưa xử lí',
+            Flag : 0
+        })    
+        // Các biến root 
         this.itemRef = this.getRef().child('Cart/' + this.props.cartId + '/Hanghoa/')
         this.valRef = this.getRef().child('Thamso/')
-         firebaseApp.database().ref('Cart/' + this.props.cartId + '/Trangthai/').set({
-            Status: 'Chưa xử lí'
-        })       
-
+       // this.sttRef = this.getRef().child('Cart/' + this.props.cartId + '/Trangthai/')
+        // Thêm trang thái vào mỗi giỏ hàng gồm các status và biến cờ hiệu
+           
+        // Tính tổng tiền + - thuế ..... tham số
         if (this.props.price == null) {
             Tonggia = 0;
         } else {
@@ -62,6 +68,7 @@ export default class Cart extends Component {
         }
         console.log('Cart ID la' + this.props.cartId)
         Total += Tonggia
+        // bind
         this.navigate= this.navigate.bind(this)
 
     }
@@ -92,17 +99,22 @@ export default class Cart extends Component {
 
     componentWillMount() {
         // load thông tin giỏ hàng từ firebase
+       
         this.itemRef.on('value', (snap) => {
             var count = snap.numChildren()
             snap.forEach((child) => {
                 arr.push({ CID: child.key, name: child.val().ProductName, price: child.val().Price, image: child.val().Image })
             })
+            // cho nay khong dung lam sua sau
+            if(count == 0){
+                Total = 0;
+            }
             this.setState({
                 dataSource: this.state.dataSource.cloneWithRows(arr),
                 Sum: Total,
                 dem: count,
 
-
+            
             })
             console.log(count)
             Demso = count
@@ -223,7 +235,7 @@ export default class Cart extends Component {
                     </View>
 
                     <Footer>
-                        <Button full success onPress={() => this.navigate('Pay', this.props.cartId, this.state.Sum)}>
+                        <Button  full success onPress={() => this.navigate('Pay', this.props.cartId, this.state.Sum)}>
                             <Text>TIẾN HÀNH THANH TOÁN</Text>
                         </Button>
                     </Footer>

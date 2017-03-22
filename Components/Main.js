@@ -14,11 +14,12 @@ import {
 } from 'react-native';
 // bo thu vien nativebase.io
 import {
-  Spinner, Container, Header, Item, Input, Button, Left, Right, Body
+  Spinner, Container, Header, Item, Input, Left, Right, Body
 } from 'native-base';
 import Drawer from 'react-native-drawer';
-import Icon from 'react-native-vector-icons/MaterialIcons';
-
+import{
+  Tile, Overlay,Icon,Title,Subtitle,Heading,Button
+}from'@shoutem/ui'
 // import screen
 import LaptopProducts from './LaptopProducts'
 //var draScene =require('./drawerScene');
@@ -144,7 +145,13 @@ export default class Main extends Component {
             </ScrollView>
           </View>
           <View style={styles.mainContainer}>
-
+          <Tile styleName="text-centric">
+            <Overlay><Heading>-20%</Heading></Overlay>
+            <Title styleName="md-gutter-top">COOL BLACK AND WHITE STYLISH WATCHES</Title>
+            <Subtitle styleName="line-through sm-gutter-top">$280</Subtitle>
+            <Heading>$250</Heading>
+            <Button styleName="dark md-gutter-top"><Icon name="cart" /><Text>ADD TO BASKET</Text></Button>
+          </Tile>
           </View>
 
 

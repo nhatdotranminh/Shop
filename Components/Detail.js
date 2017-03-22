@@ -96,7 +96,7 @@ export default class Detail extends Component {
         // biên props.cartId luôn bằng với state.newCartId trong khi chưỏng trình chưa kết thúc
         // mỗi khi mở chương trình chỉ có 1 biến newPostKey được tạo 
         if (this.props.cartId === this.state.newCartId) {
-            let childId = this.getRef().child('Cart/' + this.props.cartId+'/Hanghoa/').push().key;
+            let childId = this.getRef().child('Cart/' + this.props.cartId + '/Hanghoa/').push().key;
             firebaseApp.database().ref('/Cart/' + this.props.cartId + '/Hanghoa/' + childId).update({
                 ProductName: name,
                 Price: price,
@@ -104,7 +104,7 @@ export default class Detail extends Component {
                 Ngaynhap: date
             });
         } else {
-            var Childkey = this.getRef().child('/Cart/' + newPostKey + '/Hanghoa/').push().key;
+            let Childkey = this.getRef().child('/Cart/' + newPostKey + '/Hanghoa/').push().key;
             firebaseApp.database().ref('/Cart/' + newPostKey + '/Hanghoa/' + Childkey).set({
                 ProductName: name,
                 Price: price,
@@ -124,7 +124,7 @@ export default class Detail extends Component {
                 price: price
             }
         })
-       
+
 
     }
 
@@ -206,21 +206,23 @@ const styles = StyleSheet.create({
         flex: 1
     },
     nameAndPriceCon: {
-        flex: 1
+        flex: 2
     },
     button: {
         backgroundColor: '#2ecc71'
     },
     productNameText: {
         fontSize: 24,
-        color: '#e67e22'
+        color: '#e67e22',
+        margin: 1
+
     },
     price: {
         fontSize: 24
     },
     productImg: {
         width: deviceScreen.height / 2,
-        height: deviceScreen.height / 2 - 30,
+        height: deviceScreen.height / 2 - 50,
         resizeMode: 'contain',
 
     },
@@ -241,7 +243,7 @@ const styles = StyleSheet.create({
         width: deviceScreen.height / 6 - 20
     },
     imgContainer: {
-        flex: 2.5,
+        flex: 3,
         justifyContent: 'center',
         alignItems: 'center'
     },
