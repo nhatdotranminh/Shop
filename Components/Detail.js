@@ -1,18 +1,34 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import {
     View,
     Text,
     TouchableOpacity,
     Dimensions,
-    ScrollView,
+
     Navigator,
-    Image,
+
     StyleSheet
 } from 'react-native';
 import {
-    Container, Header, Title, Button, Left, Right, Body, Footer, Tab, Tabs, Toast
+    Header,
+    Left,
+    Right,
+    Body,
+    Footer,
+    Tab,
+    Tabs,
+    Toast
 } from 'native-base'
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import {
+    Icon,
+    Button,
+    Screen,
+    ScrollView,
+    Image,
+    Subtitle,
+    Title
+} from '@shoutem/ui'
+
 // import screen
 //
 import Cart from './Cart'
@@ -24,9 +40,7 @@ import firebaseApp from '../Help/firebase';
 //
 // bien
 var deviceScreen = Dimensions.get('window')
-// tạo Mã mới cho 1 phiên làm việc với giỏ hàng
-var newPostKey = firebaseApp.database().ref().child('Cart').push().key;
-// mảng lưu ảnh chi tiết sản phẩm
+// tạo Mã mới cho 1 phiên làm việc với giỏ hàng mảng lưu ảnh chi tiết sản phẩm
 var arrImg = []
 //
 
@@ -36,118 +50,173 @@ export default class Detail extends Component {
         this.state = {
             uriImage: this.props.image,
             arr: [],
-            newCartId: newPostKey
-
+            newCartId: ''
         }
+
         // query firebase
-        this.itemRef = this.getRef().child('Laptop/Brand/' + this.props.brandName + '/Products/' + this.props.productName)
-        this.viewDetailRef = this.getRef().child('Image/' + this.props.productName)
-        this.orderNavigate = this.orderNavigate.bind(this)
-        this.chooseImage = this.chooseImage.bind(this)
+        this.itemRef = this
+            .getRef()
+            .child('Laptop/Brand/' + this.props.brandName + '/Products/' + this.props.productName)
+        this.viewDetailRef = this
+            .getRef()
+            .child('Image/' + this.props.productName)
+        this.orderNavigate = this
+            .orderNavigate
+            .bind(this)
+        this.chooseImage = this
+            .chooseImage
+            .bind(this)
+        console.log("details ID " + this.props.cartId)
     }
     getRef() {
-        return firebaseApp.database().ref();
+        return firebaseApp
+            .database()
+            .ref();
     }
     componentWillMount() {
-        // load ảnh từ firebase về và gán vào mảng ảnh arrimg sau đó set state arr 
-        this.viewDetailRef.on('value', (snap) => {
-            var count = snap.numChildren()
-            for (i = 1; i < count; i++) {
-                var detailImage = this.viewDetailRef.child('image' + i)
-                detailImage.on('value', (datasnap) => {
-                    arrImg.push({ image: datasnap.val() })
-                })
-            }
-            this.setState({
-                arr: arrImg
+        // load ảnh từ firebase về và gán vào mảng ảnh arrimg sau đó set state arr
+        this
+            .viewDetailRef
+            .on('value', (snap) => {
+                var count = snap.numChildren()
+                for (i = 1; i < count; i++) {
+                    var detailImage = this
+                        .viewDetailRef
+                        .child('image' + i)
+                    detailImage.on('value', (datasnap) => {
+                        arrImg.push({
+                            image: datasnap.val()
+                        })
+                    })
+                }
+                this.setState({arr: arrImg})
+                arrImg = []
             })
-            arrImg = []
-        })
     }
     renderRow(properties) {
         // thay đổi hình ảnh
         return (
-            <TouchableOpacity style={styles.card}
-                onPress={() => this.chooseImage(properties.image)} >
-                <Image source={{ uri: properties.image }} style={styles.img} />
+            <TouchableOpacity
+                style={styles.card}
+                onPress={() => this.chooseImage(properties.image)}>
+                <Image
+                    source={{
+                    uri: properties.image
+                }}
+                    styleName='medium'/>
             </TouchableOpacity>
         )
     }
     chooseImage(image) {
-        this.setState({
-            uriImage: image
-        })
+        this.setState({uriImage: image})
     }
     //
     navigate(routename, cartId) {
-        this.props.navigator.push({
-            id: routename,
-            passProps: {
-                cartId: cartId,
-            }
-        })
+        this
+            .props
+            .navigator
+            .push({
+                id: routename,
+                passProps: {
+                    cartId: cartId
+                }
+            })
     }
-    orderNavigate(routename, name, price, image, cartId) {
+    orderNavigate(routename, name, price, image, tonggiatri) {
         var date = new Date().toDateString()
-        // kiểm tra tương thích ID của các phiên làm việc với giỏ hàng
-        // nêu đúng thì tiếp tục 
-        // ko đúng thì bắt đầu tạo 1 phiên làm việc mới
-        // mỗi phiên làm việc có nhiều ID con mỗi ID con tương ứng 1 món hàng thêm vào giỏ hàng
-        // biên props.cartId luôn bằng với state.newCartId trong khi chưỏng trình chưa kết thúc
-        // mỗi khi mở chương trình chỉ có 1 biến newPostKey được tạo 
-        if (this.props.cartId === this.state.newCartId) {
-            let childId = this.getRef().child('Cart/' + this.props.cartId + '/Hanghoa/').push().key;
-            firebaseApp.database().ref('/Cart/' + this.props.cartId + '/Hanghoa/' + childId).update({
-                ProductName: name,
-                Price: price,
-                Image: image,
-                Ngaynhap: date
-            });
+        if (this.props.cartId != null) {
+            let childId = this
+                .getRef()
+                .child('Cart/' + this.props.cartId + '/Hanghoa/')
+                .push()
+                .key;
+            firebaseApp
+                .database()
+                .ref('/Cart/' + this.props.cartId + '/Hanghoa/' + childId)
+                .update({ProductName: name, Price: price, Image: image, Ngaynhap: date});
+            this
+                .props
+                .navigator
+                .push({
+                    id: routename,
+                    passProps: {
+                        cartId: this.props.cartId,
+                        price: price,
+                        Tonggiatri: tonggiatri
+                    }
+                })
+            this.setState({newCartId: this.props.cartId})
+
         } else {
-            let Childkey = this.getRef().child('/Cart/' + newPostKey + '/Hanghoa/').push().key;
-            firebaseApp.database().ref('/Cart/' + newPostKey + '/Hanghoa/' + Childkey).set({
-                ProductName: name,
-                Price: price,
-                Image: image,
-                Ngaynhap: date
-            });
+            var newPostKey = firebaseApp
+                .database()
+                .ref()
+                .child('Cart')
+                .push()
+                .key;
+            let Childkey = this
+                .getRef()
+                .child('/Cart/' + newPostKey + '/Hanghoa/')
+                .push()
+                .key;
+            firebaseApp
+                .database()
+                .ref('/Cart/' + newPostKey + '/Hanghoa/' + Childkey)
+                .set({ProductName: name, Price: price, Image: image, Ngaynhap: date});
 
-
+            this
+                .props
+                .navigator
+                .push({
+                    id: routename,
+                    passProps: {
+                        cartId: newPostKey,
+                        price: price,
+                        Tonggiatri: tonggiatri
+                    }
+                })
+            this.setState({newCartId: newPostKey})
         }
-        console.log('Detail' + this.state.newCartId)
-
-
-        this.props.navigator.push({
-            id: routename,
-            passProps: {
-                cartId: cartId,
-                price: price
-            }
-        })
-
 
     }
-
 
     render() {
         return (
-            <Container>
-                <Header style={{ backgroundColor: '#34495e' }}>
+            <Screen>
+                <Header
+                    style={{
+                    backgroundColor: '#3498db'
+                }}>
                     <Left>
-                        <Button transparent onPress={() => this.props.navigator.pop()}>
-                            <Text style={{ color: '#2980b9', fontSize: 18 }}>Back</Text>
+                        <Button styleName='clear' onPress={() => this.props.navigator.pop()}>
+                            <Text
+                                style={{
+                                color: '#2980b9',
+                                fontSize: 18
+                            }}>Back</Text>
                         </Button>
                     </Left>
                     <Body>
-                        <Title style={{ color: 'white' }}>{this.props.brandName}</Title>
+                        <Title
+                            style={{
+                            color: 'white'
+                        }}>{this.props.brandName}</Title>
                     </Body>
                     <Right>
-                        <Button transparent onPress={() => this.navigate('Cart', this.state.newCartId)}>
-                            <Icon style={{ color: '#2980b9', fontSize: 20 }} name='shopping-cart' />
+                        <Button
+                            styleName='clear'
+                            onPress={() => this.navigate('Cart', this.state.newCartId, this.props.Tonggiatri)}>
+                            <Icon
+                                style={{
+                                fontSize: 20
+                            }}
+                                name='cart'/>
                         </Button>
                     </Right>
                 </Header>
-                <View style={styles.mainContainer}>
+                <View style={{
+                    flex: 9
+                }}>
                     <Tabs>
                         <Tab heading="Tổng quan">
                             <View style={styles.tongquancontainer}>
@@ -156,18 +225,30 @@ export default class Detail extends Component {
                                         {this.props.productName}
                                     </Text>
                                     <Text style={styles.price}>
-                                        {this.props.price.toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,")} VNĐ
-                                        </Text>
+                                        {this
+                                            .props
+                                            .price
+                                            .toString()
+                                            .replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,")}
+                                        VNĐ
+                                    </Text>
                                 </View>
                                 <View style={styles.imgContainer}>
-                                    <Image style={styles.productImg} source={{ uri: this.state.uriImage }} />
+                                    <Image
+                                        styleName='large-wide'
+                                        source={{
+                                        uri: this.state.uriImage
+                                    }}/>
                                 </View>
                                 <View style={styles.imageList}>
                                     <ScrollView
                                         horizontal={true}
                                         automaticallyAdjustContentInsets={false}
-                                        style={[styles.scrollView, styles.horizontalScrollView]} >
-                                        {this.state.arr.map(this.renderRow.bind(this))}
+                                        style={[styles.scrollView, styles.horizontalScrollView]}>
+                                        {this
+                                            .state
+                                            .arr
+                                            .map(this.renderRow.bind(this))}
                                     </ScrollView>
                                 </View>
 
@@ -175,22 +256,38 @@ export default class Detail extends Component {
                         </Tab>
                         <Tab heading="Chi tiết sản phẩm">
                             <View style={styles.ctContainer}>
-                                <Text style={styles.text}>Thông số kỹ thuật:{this.props.Mieuta}</Text>
+
+                                <Title >Thông số kỹ thuật:
+                                    <Subtitle>{this.props.Mieuta}</Subtitle>
+                                </Title>
+
                                 <Text style={styles.text}>Tình trạng: {this.props.tinhtrang}</Text>
                                 <Text style={styles.text}>Bảo hành: {this.props.baohanh}</Text>
                                 <Text style={styles.text}>Quà tặng: {this.props.khuyenmai}</Text>
                             </View>
                         </Tab>
                     </Tabs>
-
                 </View>
-                <Footer>
-                    <Button style={{ backgroundColor: '#2ecc71' }} onPress={() => this.orderNavigate('Cart', this.props.productName, this.props.price, this.props.image, this.state.newCartId)}>
-                        <Icon style={{ fontSize: 20 }} name='add-shopping-cart' />
+                <View style={{
+                    flex: 1
+                }}>
+                    <Button
+                        styleName='full-width'
+                        style={{
+                        backgroundColor: '#2ecc71',
+                        borderRadius: 10
+                    }}
+                        onPress={() => this.orderNavigate('Cart', this.props.productName, this.props.price, this.props.image)}>
+                        <Icon
+                            style={{
+                            fontSize: 20
+                        }}
+                            name='add-to-cart'/>
                         <Text>ADD TO CART</Text>
                     </Button>
-                </Footer>
-            </Container>
+                </View>
+
+            </Screen>
         );
 
     }
@@ -206,26 +303,28 @@ const styles = StyleSheet.create({
         flex: 1
     },
     nameAndPriceCon: {
-        flex: 2
+        flex: 1
     },
-    button: {
-        backgroundColor: '#2ecc71'
+    imgContainer: {
+        flex: 4,
+        justifyContent: 'center',
+        alignItems: 'center'
     },
+    imageList: {
+        flex: 2,
+        backgroundColor: '#ecf0f1'
+    },
+    price: {
+        fontSize: 24
+    },
+
     productNameText: {
         fontSize: 24,
         color: '#e67e22',
         margin: 1
 
     },
-    price: {
-        fontSize: 24
-    },
-    productImg: {
-        width: deviceScreen.height / 2,
-        height: deviceScreen.height / 2 - 50,
-        resizeMode: 'contain',
 
-    },
     ctContainer: {
         flex: 1,
         margin: 10
@@ -242,13 +341,11 @@ const styles = StyleSheet.create({
         height: deviceScreen.height / 6 - 20,
         width: deviceScreen.height / 6 - 20
     },
-    imgContainer: {
-        flex: 3,
-        justifyContent: 'center',
-        alignItems: 'center'
-    },
-    scrollView: { height: deviceScreen.height / 6 },
-    horizontalScrollView: { height: 120 },
-    imageList: { flex: 2, backgroundColor: 'white' },
 
+    scrollView: {
+        height: deviceScreen.height / 6
+    },
+    horizontalScrollView: {
+        height: 120
+    }
 });

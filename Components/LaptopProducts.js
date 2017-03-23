@@ -1,18 +1,23 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
+import {TouchableOpacity, Dimensions, Navigator, StyleSheet} from 'react-native';
+import {Container, Header, Left, Right, Body} from 'native-base'
 import {
-    View,
-    Text,
-    TouchableOpacity,
-    Dimensions,
-    ListView,
-    Navigator,
     Image,
-    StyleSheet
-} from 'react-native';
-import {
-    Container, Header, Title, Button, Left, Right, Body, Icon
-} from 'native-base'
-
+    ListView,
+    Tile,
+    Title,
+    Subtitle,
+    Overlay,
+    Screen,
+    Card,
+    Heading,
+    Icon,
+    Button,
+    GridRow,
+    Caption,
+    View,
+    Text
+} from '@shoutem/ui';
 // import screen
 //
 import Detail from './Detail'
@@ -25,123 +30,235 @@ import firebaseApp from '../Help/firebase';
 var deviceScreen = Dimensions.get('window')
 var product = []
 //
+
 // main
+
 export default class LaptopProducts extends Component {
+
     constructor(props) {
         super(props)
         this.state = {
-            dataSource: new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 })
+            array: [],
+            newCartId:''
         }
-        this.itemsRef = this.getRef().child('Laptop/Brand/' + this.props.brandName + '/Products');
-        this.navigate = this.navigate.bind(this);
+        this.itemsRef = this
+            .getRef()
+            .child('Laptop/Brand/' + this.props.brandName + '/Products');
+        this.navigate = this
+            .navigate
+            .bind(this);
+         console.log("Product ID "+ this.props.cartId)
     }
+
     getRef() {
-        return firebaseApp.database().ref();
+        return firebaseApp
+            .database()
+            .ref();
     }
     componentWillMount() {
-        this.itemsRef.on('value', (snap) => {
-            snap.forEach((child) => {
-                product.push({
-                    name: child.key, price: child.val().Price, color: child.val().Color,
-                    image: child.val().Image, Des: child.val().Mieuta,
-                    tinhtrang: child.val().Tinhtrang, baohanh: child.val().BaoHanh, khuyenmai: child.val().Khuyenmai
+        this
+            .itemsRef
+            .on('value', (snap) => {
+                snap.forEach((child) => {
+                    product.push({
+                        name: child.key,
+                        price: child
+                            .val()
+                            .Price,
+                        color: child
+                            .val()
+                            .Color,
+                        image: child
+                            .val()
+                            .Image,
+                        Des: child
+                            .val()
+                            .Mieuta,
+                        tinhtrang: child
+                            .val()
+                            .Tinhtrang,
+                        baohanh: child
+                            .val()
+                            .BaoHanh,
+                        khuyenmai: child
+                            .val()
+                            .Khuyenmai
+                    })
                 })
+
+                this.setState({array: product})
+                product = []
+
             })
-
-            this.setState({
-                dataSource: this.state.dataSource.cloneWithRows(product)
-
-            })
-            product = []
-
-        })
 
     }
+
     renderRow(Products) {
-        console.log(Products.name)
-        return (
-            <View style={styles.row}>
-                <View style={styles.square}>
-                    <TouchableOpacity style={styles.productImage} onPress={() => this.navigate('Detail', Products.name,
-                        Products.price, Products.color, Products.image, Products.Des, Products.tinhtrang, Products.baohanh, Products.khuyenmai, this.props.cartId)}>
-                        <Image style={styles.image} source={{ uri: Products.image }} />
+
+        const cellViews = _.map(Products, (item) => {
+            return (
+
+                <Card>
+                    <TouchableOpacity
+                        style={styles.productImage}
+                        onPress={() => this.navigate('Detail', item.name, item.price, item.color, item.image, item.Des, item.tinhtrang, item.baohanh, item.khuyenmai, this.props.cartId, this.props.Tonggiatri)}>
+                        <Image
+                            style={{
+                            resizeMode: 'center'
+                        }}
+                            styleName="medium-wide"
+                            source={{
+                            uri: item.image
+                        }}/>
                     </TouchableOpacity>
-                    <View style={styles.nameView}>
-                        <Text style={styles.nameText}>{Products.name}</Text>
+                    <View styleName="content">
+                        <Subtitle>{item.name}</Subtitle>
+                        <View styleName="horizontal v-center space-between">
+                            <View styleName="horizontal">
+                                <Text styleName="md-gutter-right">{item.price}</Text>
+                                <Caption styleName="line-through">$120.00</Caption>
+                            </View>
+                            <Button
+                                onPress={() => this.orderNavigate('Cart', item.name, item.price, item.image, this.props.Tonggiatri)}
+                                styleName="tight clear"><Icon name="cart"/></Button>
+                        </View>
                     </View>
-                </View>
-            </View>
+                </Card>
+
+            );
+        })
+
+        return (
+
+            <GridRow columns={2}>
+
+                {cellViews}
+
+            </GridRow>
+
         )
     }
-    navigate(routename, name, price, color, image, Des, tinhtrang, baohanh, khuyenmai, cartid) {
-        this.props.navigator.push({
-            id: routename,
-            passProps: {
-                productName: name, price: price, color: color, image: image, Mieuta: Des, tinhtrang: tinhtrang, baohanh: baohanh,
-                khuyenmai: khuyenmai, cartId: cartid
-            }
+    // truyền qua detail
+    navigate(routename, name, price, color, image, Des, tinhtrang, baohanh, khuyenmai, cartid, tonggiatri) {
+        this
+            .props
+            .navigator
+            .push({
+                id: routename,
+                passProps: {
+                    productName: name,
+                    price: price,
+                    color: color,
+                    image: image,
+                    Mieuta: Des,
+                    tinhtrang: tinhtrang,
+                    baohanh: baohanh,
+                    khuyenmai: khuyenmai,
+                    cartId: cartid,
+                    Tonggiatri: tonggiatri
+                }
 
-        })
+            })
+    }
+    // oder truyen qua cart
+    orderNavigate(routename, name, price, image, tonggiatri) {
+        var date = new Date().toDateString()
+        if (this.props.cartId != null) {
+            let childId = this
+                .getRef()
+                .child('Cart/' + this.props.cartId + '/Hanghoa/')
+                .push()
+                .key;
+            firebaseApp
+                .database()
+                .ref('/Cart/' + this.props.cartId + '/Hanghoa/' + childId)
+                .update({ProductName: name, Price: price, Image: image, Ngaynhap: date});
+            this
+                .props
+                .navigator
+                .push({
+                    id: routename,
+                    passProps: {
+                        cartId: this.props.cartId,
+                        price: price,
+                        Tonggiatri: tonggiatri
+                    }
+                })
+            this.setState({newCartId: this.props.cartId})
+         
+        } else {
+            var newPostKey = firebaseApp
+                .database()
+                .ref()
+                .child('Cart')
+                .push()
+                .key;
+            let Childkey = this
+                .getRef()
+                .child('/Cart/' + newPostKey + '/Hanghoa/')
+                .push()
+                .key;
+            firebaseApp
+                .database()
+                .ref('/Cart/' + newPostKey + '/Hanghoa/' + Childkey)
+                .set({ProductName: name, Price: price, Image: image, Ngaynhap: date});
+
+            this
+                .props
+                .navigator
+                .push({
+                    id: routename,
+                    passProps: {
+                        cartId: newPostKey,
+                        price: price,
+                        Tonggiatri: tonggiatri
+                    }
+                })
+            this.setState({newCartId: newPostKey})
+        }
+       
+       
     }
 
     render() {
+        const groupedData = GridRow.groupByRows(this.state.array, 2)
         return (
-            <View style={styles.container}>
-
-                <Header style={{ backgroundColor: '#34495e' }}>
+            <Screen>
+                <Header
+                    style={{
+                    backgroundColor: '#3498db'
+                }}>
                     <Left>
-                        <Button transparent onPress={() => this.props.navigator.pop()}>
-                            <Text style={{ color: '#2980b9', fontSize: 18 }}>Back</Text>
+                        <Button styleName="clear" onPress={() => this.props.navigator.pop()}>
+                            <Text
+                                style={{
+                                color: '#2980b9',
+                                fontSize: 18
+                            }}>Back</Text>
                         </Button>
                     </Left>
                     <Body>
-                        <Title style={{ color: 'white' }}>{this.props.brandName}</Title>
+                        <Title
+                            style={{
+                            color: 'white'
+                        }}>{this.props.brandName}</Title>
                     </Body>
-                    <Right>
-
-                    </Right>
+                    <Right></Right>
                 </Header>
-                <View style={styles.contain}>
-                    <ListView contentContainerStyle={styles.gridView}
-                        dataSource={this.state.dataSource}
-                        renderRow={this.renderRow.bind(this)} />
-                </View>
-            </View>
+
+                <ListView
+                    data={groupedData}
+                    renderRow={this
+                    .renderRow
+                    .bind(this)}/>
+            </Screen>
+
         );
 
     }
 }
 const styles = StyleSheet.create({
-    container: { flex: 1 },
-    contain: {
-        flex: 10
-    },
-    gridView: { flexDirection: 'row', flexWrap: 'wrap', marginLeft: 10, marginRight: 10 },
-    // renderRow
-    row: { height: deviceScreen.height / 3 },
-    square: {
-        width: (deviceScreen.width - 20) / 2 - 20,
-        height: deviceScreen.width / 2 + 20,
-        margin: 10,
-        flexDirection: 'column',
-        borderRadius: 5
-    },
-    productImage: {
-        flex: 8,
-        margin: 10
-    },
-    image: {
-        flex: 0.6, borderRadius: 5, resizeMode: 'contain'
-    },
-    nameView: {
-        flex: 2.5,
-        justifyContent: 'center',
-        alignItems: 'center',
-        //	 backgroundColor:'#8bc34a',
-        borderRadius: 15
-
-    },
-    nameText: {
-        fontSize: 16, //color: 'white'
-    },
+    container: {
+        flex: 1
+    }
 })

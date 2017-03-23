@@ -42,6 +42,7 @@ export default class Pay extends Component {
         super(props);
         this.state = {
             selectedItem: undefined,
+            cartId:'',
             selected1: 'key1',
             results: {
                 items: []
@@ -103,10 +104,12 @@ export default class Pay extends Component {
                 })
             Toast.show({ text: 'Thành công vui lòng kiểm tra Email', position: 'bottom', buttonText: 'Okay' })
         }
+        var reset = 0;
         this.props.navigator.push({
             id: 'Main',
             passProps: {
-                cartId: firebaseApp.database().ref().child('Cart').push().key
+                cartId: '',
+                Tong: reset
             }
         })
 
