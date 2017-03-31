@@ -50,7 +50,7 @@ export default class Detail extends Component {
         this.state = {
             uriImage: this.props.image,
             arr: [],
-            newCartId: ''
+            newCartId: this.props.cartId
         }
 
         // query firebase
@@ -75,6 +75,7 @@ export default class Detail extends Component {
     }
     componentWillMount() {
         // load ảnh từ firebase về và gán vào mảng ảnh arrimg sau đó set state arr
+        console.log("products id " + this.props.cartId)
         this
             .viewDetailRef
             .on('value', (snap) => {
@@ -122,62 +123,49 @@ export default class Detail extends Component {
                 }
             })
     }
-    orderNavigate(routename, name, price, image, tonggiatri) {
-        var date = new Date().toDateString()
-        if (this.props.cartId != null) {
-            let childId = this
-                .getRef()
-                .child('Cart/' + this.props.cartId + '/Hanghoa/')
-                .push()
-                .key;
-            firebaseApp
-                .database()
-                .ref('/Cart/' + this.props.cartId + '/Hanghoa/' + childId)
-                .update({ProductName: name, Price: price, Image: image, Ngaynhap: date});
-            this
-                .props
-                .navigator
-                .push({
-                    id: routename,
-                    passProps: {
-                        cartId: this.props.cartId,
-                        price: price,
-                        Tonggiatri: tonggiatri
-                    }
-                })
-            this.setState({newCartId: this.props.cartId})
-
-        } else {
-            var newPostKey = firebaseApp
-                .database()
+    orderNavigate(routename, name, price, image, cartid) {
+        if (this.props.cartId === this.state.newCartId) {
+            let childId = firebaseApp
                 .ref()
-                .child('Cart')
-                .push()
-                .key;
-            let Childkey = this
-                .getRef()
-                .child('/Cart/' + newPostKey + '/Hanghoa/')
+                .child('Cart/' + this.props.cartId)
                 .push()
                 .key;
             firebaseApp
-                .database()
-                .ref('/Cart/' + newPostKey + '/Hanghoa/' + Childkey)
-                .set({ProductName: name, Price: price, Image: image, Ngaynhap: date});
-
-            this
+                .ref('/Cart/' + this.props.cartId + '/' + childId)
+                .update({ProductName: name, Price: price, Image: image, Ngaynhap: date});
+             this
                 .props
                 .navigator
                 .push({
                     id: routename,
                     passProps: {
-                        cartId: newPostKey,
+                        cartId: cartid,
                         price: price,
-                        Tonggiatri: tonggiatri
+                        
                     }
                 })
-            this.setState({newCartId: newPostKey})
-        }
+        } else {
+            var Childkey = firebaseApp
+                .ref()
+                .child('Cart/' + newPostKey)
+                .push()
+                .key;
+            firebaseApp
+                .ref('/Cart/' + newPostKey + '/' + Childkey)
+                .set({ProductName: name, Price: price, Image: image, Ngaynhap: date});
+             this
+                .props
+                .navigator
+                .push({
+                    id: routename,
+                    passProps: {
+                        cartId: cartid,
+                        price: price,
+                        
+                    }
+                })
 
+        }
     }
 
     render() {
@@ -205,7 +193,7 @@ export default class Detail extends Component {
                     <Right>
                         <Button
                             styleName='clear'
-                            onPress={() => this.navigate('Cart', this.state.newCartId, this.props.Tonggiatri)}>
+                            onPress={() => this.navigate('Cart', this.state.newCartId,)}>
                             <Icon
                                 style={{
                                 fontSize: 20
@@ -277,7 +265,7 @@ export default class Detail extends Component {
                         backgroundColor: '#2ecc71',
                         borderRadius: 10
                     }}
-                        onPress={() => this.orderNavigate('Cart', this.props.productName, this.props.price, this.props.image)}>
+                        onPress={() => this.orderNavigate('Cart', this.props.productName, this.props.price, this.props.image, this.state.newCartId)}>
                         <Icon
                             style={{
                             fontSize: 20

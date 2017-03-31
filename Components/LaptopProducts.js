@@ -39,7 +39,7 @@ export default class LaptopProducts extends Component {
         super(props)
         this.state = {
             array: [],
-            newCartId:''
+            newCartId:this.props.cartId
         }
         this.itemsRef = this
             .getRef()
@@ -56,6 +56,7 @@ export default class LaptopProducts extends Component {
             .ref();
     }
     componentWillMount() {
+        console.log("products id "+ this.props.cartId)
         this
             .itemsRef
             .on('value', (snap) => {
@@ -101,7 +102,7 @@ export default class LaptopProducts extends Component {
                 <Card>
                     <TouchableOpacity
                         style={styles.productImage}
-                        onPress={() => this.navigate('Detail', item.name, item.price, item.color, item.image, item.Des, item.tinhtrang, item.baohanh, item.khuyenmai, this.props.cartId, this.props.Tonggiatri)}>
+                        onPress={() => this.navigate('Detail', item.name, item.price, item.color, item.image, item.Des, item.tinhtrang, item.baohanh, item.khuyenmai, this.state.newCartId, )}>
                         <Image
                             style={{
                             resizeMode: 'center'
@@ -119,7 +120,7 @@ export default class LaptopProducts extends Component {
                                 <Caption styleName="line-through">$120.00</Caption>
                             </View>
                             <Button
-                                onPress={() => this.orderNavigate('Cart', item.name, item.price, item.image, this.props.Tonggiatri)}
+                                onPress={() => this.orderNavigate('Cart', item.name, item.price, item.image,this.state.newCartId)}
                                 styleName="tight clear"><Icon name="cart"/></Button>
                         </View>
                     </View>
@@ -139,7 +140,7 @@ export default class LaptopProducts extends Component {
         )
     }
     // truyền qua detail
-    navigate(routename, name, price, color, image, Des, tinhtrang, baohanh, khuyenmai, cartid, tonggiatri) {
+    navigate(routename, name, price, color, image, Des, tinhtrang, baohanh, khuyenmai, cartid, ) {
         this
             .props
             .navigator
@@ -155,68 +156,34 @@ export default class LaptopProducts extends Component {
                     baohanh: baohanh,
                     khuyenmai: khuyenmai,
                     cartId: cartid,
-                    Tonggiatri: tonggiatri
+                   
                 }
 
             })
     }
     // oder truyen qua cart
-    orderNavigate(routename, name, price, image, tonggiatri) {
+    orderNavigate(routename, name, price, image, cartid) {
         var date = new Date().toDateString()
-        if (this.props.cartId != null) {
-            let childId = this
+            var childId = this
                 .getRef()
-                .child('Cart/' + this.props.cartId + '/Hanghoa/')
+                .child('Cart/' + cartid + '/Hanghoa/')
                 .push()
                 .key;
             firebaseApp
                 .database()
-                .ref('/Cart/' + this.props.cartId + '/Hanghoa/' + childId)
-                .update({ProductName: name, Price: price, Image: image, Ngaynhap: date});
-            this
-                .props
-                .navigator
-                .push({
-                    id: routename,
-                    passProps: {
-                        cartId: this.props.cartId,
-                        price: price,
-                        Tonggiatri: tonggiatri
-                    }
-                })
-            this.setState({newCartId: this.props.cartId})
-         
-        } else {
-            var newPostKey = firebaseApp
-                .database()
-                .ref()
-                .child('Cart')
-                .push()
-                .key;
-            let Childkey = this
-                .getRef()
-                .child('/Cart/' + newPostKey + '/Hanghoa/')
-                .push()
-                .key;
-            firebaseApp
-                .database()
-                .ref('/Cart/' + newPostKey + '/Hanghoa/' + Childkey)
+                .ref('/Cart/' + cartid + '/Hanghoa/' + childId)
                 .set({ProductName: name, Price: price, Image: image, Ngaynhap: date});
-
             this
                 .props
                 .navigator
                 .push({
                     id: routename,
                     passProps: {
-                        cartId: newPostKey,
+                        cartId: cartid,
                         price: price,
-                        Tonggiatri: tonggiatri
+                        
                     }
                 })
-            this.setState({newCartId: newPostKey})
-        }
-       
        
     }
 

@@ -42,14 +42,7 @@ import LaptopProducts from './LaptopProducts'
 import firebaseApp from '../Help/firebase';
 
 //
-var Tonggia;
-var GiohangID;
-var newPostKey = firebaseApp
-  .database()
-  .ref()
-  .child('Cart')
-  .push()
-  .key;
+
 //
 // khai bao cac bien
 var deviceScreen = Dimensions.get('window')
@@ -68,14 +61,7 @@ export default class Main extends Component {
       loaded: false,
       searchText: '',
       array: [],
-      cartID: '',
-      Tong: ''
-    }
-    GiohangID= this.props.cartId
-    if (this.props.Tong != null && this.props.Tong == 0) {
-      Tonggia = this.props.Tong
-    } else {
-      console.log('Chưa có tổng')
+      cartID: ""
     }
 
     this.itemsRef = this
@@ -94,7 +80,7 @@ export default class Main extends Component {
       .database()
       .ref();
   }
-  
+
   componentWillMount() {
     this
       .itemsRef
@@ -114,27 +100,29 @@ export default class Main extends Component {
             .dataSource
             .cloneWithRows(arrBrand),
           loaded: true,
-          array: arrBrand,
-          Tong: Tonggia
+          array: arrBrand
         })
         arrBrand = []
       })
-    if (GiohangID == '' || GiohangID == undefined) {
 
-      this.setState({cartID: newPostKey})
-
-    } else {
-      this.setState({cartId: this.props.cartId})
-    }
-    console.log('props id' + this.props.cartId)
-    console.log("Main cart Id" + newPostKey)
-    console.log("Main cart Id" + this.state.cartID)
+  }
+  componentDidMount() {
+   
+      var newKey = firebaseApp
+        .database()
+        .ref()
+        .child('Cart')
+        .push()
+        .key;
+      this.setState({cartID: newKey})
+   
 
   }
   createRow(uri) {
+    console.log('state id' + this.state.cartID)
     return (
       <TouchableOpacity
-        onPress={() => this.navigate('LaptopProducts', uri.name, this.state.cartID, this.state.Tong)}>
+        onPress={() => this.navigate('LaptopProducts', uri.name, this.state.cartID,)}>
         <Row>
           <Image
             source={{
@@ -149,7 +137,7 @@ export default class Main extends Component {
       </TouchableOpacity>
     )
   }
-  navigate(routename, name, cartid, tonggiatri) {
+  navigate(routename, name, cartid,) {
     this
       .props
       .navigator
@@ -157,21 +145,19 @@ export default class Main extends Component {
         id: routename,
         passProps: {
           brandName: name,
-          cartId: cartid,
-          Tonggiatri: tonggiatri
+          cartId: cartid
         }
 
       })
   }
-  cartNavigate(routeid, cartid, tonggiatri) {
+  cartNavigate(routeid, cartid,) {
     this
       .props
       .navigator
       .push({
         id: routeid,
         passProps: {
-          cartId: cartid,
-          Tonggiatri: tonggiatri
+          cartId: cartid
         }
 
       })
@@ -204,7 +190,7 @@ export default class Main extends Component {
             <Right>
               <Button
                 styleName='clear'
-                onPress={() => this.cartNavigate('Cart', this.state.cartID, this.state.Tong)}>
+                onPress={() => this.cartNavigate('Cart', this.state.cartID,)}>
                 <Icon
                   style={{
                   color: '##2ecc71',

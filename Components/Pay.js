@@ -54,7 +54,8 @@ export default class Pay extends Component {
             deliveryAddress: '',
             codeKm: '',
             Dem: '',
-            Total: this.props.Totalcharge
+            Total: this.props.Totalcharge,
+
         }
         Tongtien = this.props.Totalcharge
         this.statusRef = this
@@ -105,11 +106,11 @@ export default class Pay extends Component {
             Toast.show({ text: 'Thành công vui lòng kiểm tra Email', position: 'bottom', buttonText: 'Okay' })
         }
         var reset = 0;
+        var IDcart = this.props.cartId = '';
         this.props.navigator.push({
             id: 'Main',
             passProps: {
-                cartId: '',
-                Tong: reset
+                id: IDcart
             }
         })
 

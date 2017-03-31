@@ -57,7 +57,7 @@ export default class Cart extends Component {
             childkey: '',
             dem: ''
         }
-        console.log('CArt'+this.props.cartId)
+        console.log('CArt' + this.props.cartId)
 
         // if xử lí
         if (this.props.cartId != null) {
@@ -76,18 +76,14 @@ export default class Cart extends Component {
         // this.sttRef = this.getRef().child('Cart/' + this.props.cartId +
         // '/Trangthai/') Thêm trang thái vào mỗi giỏ hàng gồm các status và biến cờ
         // hiệu Tính tổng tiền + - thuế ..... tham số
-        if (this.props.Tonggiatri != null && this.props.Tonggiatri == 0) {
-            Total = this.props.Tonggiatri
+
+        if (this.props.price == undefined) {
+            Tonggia = 0;
         } else {
-            
-            if (this.props.price == undefined) {
-                Tonggia = 0;
-            } else {
-                Tonggia = this.props.price + (this.props.price * 0.1);
-            }
-            console.log('Cart ID la' + this.props.cartId)
-            Total += Tonggia
+            Tonggia = this.props.price + (this.props.price * 0.1);
         }
+        console.log('Cart ID la' + this.props.cartId)
+        Total += Tonggia
         // bind
         this.navigate = this
             .navigate
@@ -160,6 +156,9 @@ export default class Cart extends Component {
                 Tonggia = 0;
                 arr = []
             })
+            if(Demso == 0){
+                Total = 0;
+            }
     }
 
     renderRow(property) {
