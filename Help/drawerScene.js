@@ -4,10 +4,10 @@ import {
   Text, View,Navigator
 } from 'react-native';
 import Drawer from 'react-native-drawer';
-import Menu from './Menu';
+import Menu from '../Components/Menu';
 
 
-import Main from './Main'
+import Main from '../Components/Main'
 
 const drawerStyles = {
   drawer: {

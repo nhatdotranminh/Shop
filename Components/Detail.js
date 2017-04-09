@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
     View,
     Text,
@@ -42,6 +42,10 @@ import firebaseApp from '../Help/firebase';
 var deviceScreen = Dimensions.get('window')
 // tạo Mã mới cho 1 phiên làm việc với giỏ hàng mảng lưu ảnh chi tiết sản phẩm
 var arrImg = []
+var newKey = firebaseApp.database().ref()
+    .child('Cart')
+    .push()
+    .key;
 //
 
 export default class Detail extends Component {
@@ -50,7 +54,7 @@ export default class Detail extends Component {
         this.state = {
             uriImage: this.props.image,
             arr: [],
-            newCartId: this.props.cartId
+            newCartId: newKey
         }
 
         // query firebase
@@ -90,7 +94,7 @@ export default class Detail extends Component {
                         })
                     })
                 }
-                this.setState({arr: arrImg})
+                this.setState({ arr: arrImg })
                 arrImg = []
             })
     }
@@ -102,14 +106,14 @@ export default class Detail extends Component {
                 onPress={() => this.chooseImage(properties.image)}>
                 <Image
                     source={{
-                    uri: properties.image
-                }}
-                    styleName='medium'/>
+                        uri: properties.image
+                    }}
+                    styleName='medium' />
             </TouchableOpacity>
         )
     }
     chooseImage(image) {
-        this.setState({uriImage: image})
+        this.setState({ uriImage: image })
     }
     //
     navigate(routename, cartId) {
@@ -124,44 +128,45 @@ export default class Detail extends Component {
             })
     }
     orderNavigate(routename, name, price, image, cartid) {
+        var date = new Date().toDateString()
         if (this.props.cartId === this.state.newCartId) {
-            let childId = firebaseApp
-                .ref()
-                .child('Cart/' + this.props.cartId)
+            let childId = this
+                .getRef()
+                .child('Cart/' + this.props.cartId+ '/Hanghoa/')
                 .push()
                 .key;
             firebaseApp
-                .ref('/Cart/' + this.props.cartId + '/' + childId)
-                .update({ProductName: name, Price: price, Image: image, Ngaynhap: date});
-             this
+                .database()
+                .ref('/Cart/' + this.props.cartId + '/Hanghoa/' + childId)
+                .update({ ProductName: name, Price: price, Image: image, Ngaynhap: date });
+            this
                 .props
                 .navigator
                 .push({
                     id: routename,
                     passProps: {
                         cartId: cartid,
-                        price: price,
-                        
+                        price: price
                     }
                 })
         } else {
-            var Childkey = firebaseApp
-                .ref()
-                .child('Cart/' + newPostKey)
+            var Childkey = this
+                .getRef()
+                .child('Cart/' + newKey+'/Hanghoa')
                 .push()
                 .key;
             firebaseApp
-                .ref('/Cart/' + newPostKey + '/' + Childkey)
-                .set({ProductName: name, Price: price, Image: image, Ngaynhap: date});
-             this
+                .database()
+                .ref('/Cart/' + newKey + '/Hanghoa/' + Childkey)
+                .set({ ProductName: name, Price: price, Image: image, Ngaynhap: date });
+            this
                 .props
                 .navigator
                 .push({
                     id: routename,
                     passProps: {
                         cartId: cartid,
-                        price: price,
-                        
+                        price: price
                     }
                 })
 
@@ -173,32 +178,32 @@ export default class Detail extends Component {
             <Screen>
                 <Header
                     style={{
-                    backgroundColor: '#3498db'
-                }}>
+                        backgroundColor: '#3498db'
+                    }}>
                     <Left>
                         <Button styleName='clear' onPress={() => this.props.navigator.pop()}>
                             <Text
                                 style={{
-                                color: '#2980b9',
-                                fontSize: 18
-                            }}>Back</Text>
+                                    color: '#2980b9',
+                                    fontSize: 18
+                                }}>Back</Text>
                         </Button>
                     </Left>
                     <Body>
                         <Title
                             style={{
-                            color: 'white'
-                        }}>{this.props.brandName}</Title>
+                                color: 'white'
+                            }}>{this.props.brandName}</Title>
                     </Body>
                     <Right>
                         <Button
                             styleName='clear'
-                            onPress={() => this.navigate('Cart', this.state.newCartId,)}>
+                            onPress={() => this.navigate('Cart', this.state.newCartId, )}>
                             <Icon
                                 style={{
-                                fontSize: 20
-                            }}
-                                name='cart'/>
+                                    fontSize: 20
+                                }}
+                                name='cart' />
                         </Button>
                     </Right>
                 </Header>
@@ -225,8 +230,8 @@ export default class Detail extends Component {
                                     <Image
                                         styleName='large-wide'
                                         source={{
-                                        uri: this.state.uriImage
-                                    }}/>
+                                            uri: this.state.uriImage
+                                        }} />
                                 </View>
                                 <View style={styles.imageList}>
                                     <ScrollView
@@ -262,15 +267,15 @@ export default class Detail extends Component {
                     <Button
                         styleName='full-width'
                         style={{
-                        backgroundColor: '#2ecc71',
-                        borderRadius: 10
-                    }}
+                            backgroundColor: '#2ecc71',
+                            borderRadius: 10
+                        }}
                         onPress={() => this.orderNavigate('Cart', this.props.productName, this.props.price, this.props.image, this.state.newCartId)}>
                         <Icon
                             style={{
-                            fontSize: 20
-                        }}
-                            name='add-to-cart'/>
+                                fontSize: 20
+                            }}
+                            name='add-to-cart' />
                         <Text>ADD TO CART</Text>
                     </Button>
                 </View>

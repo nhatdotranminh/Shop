@@ -83,7 +83,8 @@ export default class LaptopProducts extends Component {
                             .BaoHanh,
                         khuyenmai: child
                             .val()
-                            .Khuyenmai
+                            .Khuyenmai,
+                        GiaKM:child.val().OldPrice
                     })
                 })
 
@@ -117,11 +118,9 @@ export default class LaptopProducts extends Component {
                         <View styleName="horizontal v-center space-between">
                             <View styleName="horizontal">
                                 <Text styleName="md-gutter-right">{item.price}</Text>
-                                <Caption styleName="line-through">$120.00</Caption>
+                                <Caption styleName="line-through">{item.GiaKM}</Caption>
                             </View>
-                            <Button
-                                onPress={() => this.orderNavigate('Cart', item.name, item.price, item.image,this.state.newCartId)}
-                                styleName="tight clear"><Icon name="cart"/></Button>
+                           
                         </View>
                     </View>
                 </Card>
@@ -162,31 +161,7 @@ export default class LaptopProducts extends Component {
             })
     }
     // oder truyen qua cart
-    orderNavigate(routename, name, price, image, cartid) {
-        var date = new Date().toDateString()
-            var childId = this
-                .getRef()
-                .child('Cart/' + cartid + '/Hanghoa/')
-                .push()
-                .key;
-            firebaseApp
-                .database()
-                .ref('/Cart/' + cartid + '/Hanghoa/' + childId)
-                .set({ProductName: name, Price: price, Image: image, Ngaynhap: date});
-            this
-                .props
-                .navigator
-                .push({
-                    id: routename,
-                    passProps: {
-                        cartId: cartid,
-                        price: price,
-                        
-                    }
-                })
-       
-    }
-
+    
     render() {
         const groupedData = GridRow.groupByRows(this.state.array, 2)
         return (

@@ -1,13 +1,12 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
   StyleSheet,
-  Text,
+  
   View,
   Navigator,
   ListView,
   ScrollView,
   Dimensions,
-
   TouchableOpacity,
   TextInput,
   StatusBar
@@ -21,17 +20,18 @@ import {
   Input,
   Left,
   Right,
-  Body
+  Body,
+  Footer, FooterTab, Button, Icon, Text
 } from 'native-base';
 import Drawer from 'react-native-drawer';
 import {
   Tile,
   Overlay,
-  Icon,
+  
   Title,
   Subtitle,
   Heading,
-  Button,
+  
   Caption,
   Image,
   Row
@@ -61,7 +61,7 @@ export default class Main extends Component {
       loaded: false,
       searchText: '',
       array: [],
-      cartID: ""
+      cartID: this.props.cartID
     }
 
     this.itemsRef = this
@@ -106,38 +106,27 @@ export default class Main extends Component {
       })
 
   }
-  componentDidMount() {
-   
-      var newKey = firebaseApp
-        .database()
-        .ref()
-        .child('Cart')
-        .push()
-        .key;
-      this.setState({cartID: newKey})
-   
-
-  }
+ 
   createRow(uri) {
     console.log('state id' + this.state.cartID)
     return (
       <TouchableOpacity
-        onPress={() => this.navigate('LaptopProducts', uri.name, this.state.cartID,)}>
+        onPress={() => this.navigate('LaptopProducts', uri.name, this.props.cartID, )}>
         <Row>
           <Image
             source={{
-            uri: uri.image
-          }}
+              uri: uri.image
+            }}
             styleName='medium'
             style={{
-            resizeMode: 'contain'
-          }}/>
+              resizeMode: 'contain'
+            }} />
         </Row>
 
       </TouchableOpacity>
     )
   }
-  navigate(routename, name, cartid,) {
+  navigate(routename, name, cartid, ) {
     this
       .props
       .navigator
@@ -150,7 +139,7 @@ export default class Main extends Component {
 
       })
   }
-  cartNavigate(routeid, cartid,) {
+  cartNavigate(routeid, cartid, ) {
     this
       .props
       .navigator
@@ -169,52 +158,32 @@ export default class Main extends Component {
     if (this.state.loaded == false) {
       return (
         <View style={styles.containerLoad}>
-          <Spinner color="#58FAF4"/>
+          <Spinner color="#58FAF4" />
         </View>
       )
     } else {
       console.log(this.state.searchText)
       return (
         <Container>
-          <Header style={{
-            backgroundColor: '#3498db'
-          }}>
-            <Left>
-              <Button styleName='clear'>
-                <Text>
-                  Menu
-                </Text>
-              </Button>
-            </Left>
-            <Body></Body>
-            <Right>
-              <Button
-                styleName='clear'
-                onPress={() => this.cartNavigate('Cart', this.state.cartID,)}>
-                <Icon
-                  style={{
-                  color: '##2ecc71',
-                  fontSize: 20
-                }}
-                  name='cart'/>
-              </Button>
-            </Right>
-          </Header>
+          <StatusBar
+            backgroundColor="blue"
+            barStyle="light-content"
+          />
           <Header searchBar rounded>
             <Item>
               <Icon
                 style={{
-                fontSize: 20,
-                marginLeft: 10
-              }}
-                name="search"/>
+                  fontSize: 20,
+                  marginLeft: 10
+                }}
+                name="search" />
               <Input
                 placeholder="Search"
-                onChangeText={(text) => this.setState({searchText: text})}
-                value={this.state.text}/>
+                onChangeText={(text) => this.setState({ searchText: text })}
+                value={this.state.text} />
 
             </Item>
-            <Button styleName='clear'>
+            <Button transparent>
               <Text>Search</Text>
             </Button>
           </Header>
@@ -240,12 +209,12 @@ export default class Main extends Component {
                 <Title styleName="md-gutter-top">COOL BLACK AND WHITE STYLISH WATCHES</Title>
                 <Subtitle styleName="line-through sm-gutter-top">$280</Subtitle>
                 <Heading>$250</Heading>
-                <Button styleName="dark md-gutter-top"><Icon name="cart"/>
+                <Button dark transparent><Icon name="cart" />
                   <Text>ADD TO BASKET</Text>
                 </Button>
               </Tile>
               <Tile>
-                <Image styleName="large-banner" source={require('../Images/image-5.png')}/>
+                <Image styleName="large-banner" source={require('../Images/image-5.png')} />
                 <View styleName="content">
                   <Title>MAUI BY AIR THE BEST WAY AROUND THE ISLAND</Title>
                   <View styleName="horizontal space-between">
@@ -256,6 +225,26 @@ export default class Main extends Component {
               </Tile>
             </ScrollView>
           </View>
+          <Footer >
+                      <FooterTab>
+                          <Button>
+                              <Icon name="apps" />
+                              <Text>Apps</Text>
+                          </Button>
+                          <Button>
+                              <Icon name="camera" />
+                              <Text>Camera</Text>
+                          </Button>
+                          <Button onPress={() => active}>
+                              <Icon active name="navigate" />
+                              <Text>Navigate</Text>
+                          </Button>
+                          <Button>
+                              <Icon name="person" />
+                              <Text>Contact</Text>
+                          </Button>
+                      </FooterTab>
+                  </Footer>
 
         </Container>
 

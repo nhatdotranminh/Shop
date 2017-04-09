@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {
-  View, Text, TouchableOpacity, Navigator, StyleSheet, Image, TextInput, Dimensions,
+  View, Text, TouchableOpacity, Navigator, StyleSheet, Image, TextInput, Dimensions,AsyncStorage
 } from 'react-native';
 import {
   Spinner, Button
@@ -30,28 +30,12 @@ class Login extends Component {
     this.state = {
       email: "",
       password: "",
-      loginstatus: false,
-      useremail: ''
+     
 
     }
     this.btnLoginPressed = this.btnLoginPressed.bind(this);
   }
-  conponentDidMount() {
-    if (usemail != '') {
-      this.setState({
-        loginstatus: true,
-        useremail: usemail
-      })
-    } else {
-      this.setState({
-        loginstatus: false
-
-      })
-    }
-    usemail = '';
-   
-  }
-
+ 
   // login firebase email and password
   btnLoginPressed(email, password) {
     firebaseApp.auth().signInWithEmailAndPassword(email, password)
@@ -64,17 +48,26 @@ class Login extends Component {
         } else {
           console.log('Sign in Error:' + errorMessage);
         }
+        if(errorCode == 'auth/invalid-email'){
+          alert('invalid Email');
+        }
+        if(errorCode == null){
+            this.props.navigator.push({
+          id:"Main"
+        })
+        }
       })
-    firebase.auth().onAuthStateChanged(function (user) {
+    
+     firebase.auth().onAuthStateChanged(function (user) {
       if (user != null) {
-        usemail = user.email
         console.log(user.uid)
-        
+        AsyncStorage.setItem("user_UID",user.uid)
       }
       else {
         console.log('not logged in')
       }
     });
+    
 
   }
 
@@ -85,13 +78,7 @@ class Login extends Component {
   }
 
   render() {
-    if (this.state.loginstatus == true) {
-      return (
-        <View style={{ flex: 1, backgroundColor: 'green' }}>
-          <Text>{this.state.useremail}</Text>
-        </View>
-      )
-    } else {
+    
 
       return (
         <View style={styles.container}>
@@ -140,7 +127,7 @@ class Login extends Component {
         </View>
       );
     };
-  }
+  
 }
 
 var styles = StyleSheet.create({

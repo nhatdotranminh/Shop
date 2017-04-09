@@ -156,9 +156,9 @@ export default class Cart extends Component {
                 Tonggia = 0;
                 arr = []
             })
-            if(Demso == 0){
+        /*    if(Demso == 0){
                 Total = 0;
-            }
+            }*/
     }
 
     renderRow(property) {
