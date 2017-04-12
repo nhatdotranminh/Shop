@@ -151,6 +151,9 @@ export default class Main extends Component {
 
       })
   }
+  onPressAlert(){
+    alert('Tính năng này chưa có')
+  }
   //
   //
   // render
@@ -228,19 +231,19 @@ export default class Main extends Component {
           <Footer >
                       <FooterTab>
                           <Button>
-                              <Icon name="apps" />
+                              <Icon name="apps"  onPress={()=> this.onPressAlert()}/>
                               <Text>Apps</Text>
                           </Button>
                           <Button>
-                              <Icon name="camera" />
+                              <Icon name="camera"  onPress={()=> this.onPressAlert()}/>
                               <Text>Camera</Text>
                           </Button>
-                          <Button onPress={() => active}>
-                              <Icon active name="navigate" />
+                          <Button >
+                              <Icon active name="navigate"  onPress={()=> this.onPressAlert()}/>
                               <Text>Navigate</Text>
                           </Button>
                           <Button>
-                              <Icon name="person" />
+                              <Icon name="person"  onPress={()=> this.onPressAlert()}/>
                               <Text>Contact</Text>
                           </Button>
                       </FooterTab>

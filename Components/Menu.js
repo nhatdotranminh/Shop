@@ -58,16 +58,13 @@ export default class Menu extends Component {
             source={require('../Images/logo.jpeg')} />*/
   render() {
     return (
-
-
-
-      <View style={styles.container}>
-        <View style={{ flex: 4, backgroundColor: 'green' }}>
+     <Screen>
+        <View style={{ flex: 2.5, backgroundColor: 'green' }}>
 
         </View>
 
-        <View style={styles.main}>
-          <List>
+        <View style={styles.content}>
+           <List>
             <ListItem button onPress={() => this.onItemSelect('Main')}>
               <Left>
                 <Icon name="home" style={{ color: '#0A69FE' }} />
@@ -83,15 +80,11 @@ export default class Menu extends Component {
             </ListItem>
 
           </List>
-        </View>
-
-        <View style={styles.content}>
-          
-        </View>
-        <View style={styles.main}>
          
-        </View>
-      </View>
+       </View>
+       
+
+      </Screen>
 
     )
   }
@@ -106,19 +99,20 @@ export default class Menu extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
+    backgroundColor:'white'
   },
   userInfo: {
     marginTop: 20,
     flex: 1.5,
-    borderWidth: 0.1
+   
   },
   main: {
     flex: 1.5,
-    borderWidth: 0.1
+   
   },
   content: {
-    flex: 5,
-    borderWidth: 0.1
+    flex: 3,
+    
   }
 })

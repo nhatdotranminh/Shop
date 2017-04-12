@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {
-  View, Text, TouchableOpacity, Navigator, StyleSheet, Image, TextInput, Dimensions,AsyncStorage
+  View, Text, TouchableOpacity, Navigator, StyleSheet, Image, TextInput, Dimensions, AsyncStorage
 } from 'react-native';
 import {
   Spinner, Button
@@ -11,7 +11,9 @@ import Icon from 'react-native-vector-icons/Entypo';
 //
 //
 const firebase = require('firebase');
+
 import firebaseApp from '../Help/firebase';
+import UserInfor from './UserInfor';
 //
 var deviceScreen = Dimensions.get('window')
 var provider = new firebase.auth.FacebookAuthProvider();
@@ -30,12 +32,13 @@ class Login extends Component {
     this.state = {
       email: "",
       password: "",
-     
+
 
     }
     this.btnLoginPressed = this.btnLoginPressed.bind(this);
+    AsyncStorage.setItem("user_UID", "")
   }
- 
+
   // login firebase email and password
   btnLoginPressed(email, password) {
     firebaseApp.auth().signInWithEmailAndPassword(email, password)
@@ -48,26 +51,42 @@ class Login extends Component {
         } else {
           console.log('Sign in Error:' + errorMessage);
         }
-        if(errorCode == 'auth/invalid-email'){
+        if (errorCode == 'auth/invalid-email') {
           alert('invalid Email');
         }
-        if(errorCode == null){
-            this.props.navigator.push({
-          id:"Main"
-        })
-        }
+
       })
-    
-     firebase.auth().onAuthStateChanged(function (user) {
-      if (user != null) {
+
+    firebase.auth().onAuthStateChanged(function (user) {
+      if (user !== null) {
         console.log(user.uid)
-        AsyncStorage.setItem("user_UID",user.uid)
+        console.log(user.email)
+        console.log(user.displayName)
+        AsyncStorage.setItem("user_UID", user.uid)
+        if (user.displayName != null) {
+          AsyncStorage.setItem('user_displayName', user.displayName)
+        }
+        else{
+
+        }
+        AsyncStorage.setItem('user_Email', user.email)
+
       }
       else {
         console.log('not logged in')
       }
     });
-    
+    try {
+      const value = AsyncStorage.getItem('user_UID');
+      if (value !== null) {
+        // We have data!!
+        this.navigate('UserInfor')
+        console.log(value);
+
+      }
+    } catch (error) {
+      // Error retrieving data
+    }
 
   }
 
@@ -78,56 +97,57 @@ class Login extends Component {
   }
 
   render() {
-    
 
-      return (
-        <View style={styles.container}>
+    return (
+      <View style={styles.container}>
 
-          <Image style={styles.image} blurRadius={8} source={require('../Images/background.jpg')}>
-            <TextInput placeholder='Email'
-              onChangeText={(text) => this.setState({ email: text })}
-              style={styles.textInput}
-              value={this.state.email}
-              placeholderTextColor='black'
-              autoCorrect={false}
-              autoFocus={true}
-              />
-            <TextInput placeholder='PassWord'
-              onChangeText={(text) => this.setState({ password: text })}
-              secureTextEntry={true}
-              style={styles.textInput}
-              value={this.state.password}
-              placeholderTextColor='black'
-              autoCorrect={false}
-              autoFocus={false}
-            />
-            <View style={styles.buttonView}>
-              <View style={styles.signin}>
-                <Button success style={styles.btn} onPress={() => this.btnLoginPressed(this.state.email, this.state.password)}>
-                  <Text> Login </Text>
-                </Button>
-              </View>
-
-              <View style={styles.signin}>
-                <Button warning style={styles.btn} onPress={() => this.navigate('Resgister')}>
-                  <Text>  Sign in </Text>
-                </Button>
-              </View>
-
-            </View>
-            <View style={styles.sdk}>
-              <Button style={{ backgroundColor: '#2980b9' }}
-                onPress={() => this.fbLogin()}
-              >
-                <Icon name='facebook-with-circle' style={{ fontSize: 28, color: 'black', margin: 10 }} onPress={() => this.fbLogin()} />
-                <Text>Đăng nhập với Facebook</Text>
+        <Image style={styles.image} blurRadius={8} source={require('../Images/background.jpg')}>
+          <TextInput placeholder='Email'
+            onChangeText={(text) => this.setState({ email: text })}
+            style={styles.textInput}
+            value={this.state.email}
+            placeholderTextColor='black'
+            autoCorrect={false}
+            autoFocus={true}
+          />
+          <TextInput placeholder='PassWord'
+            onChangeText={(text) => this.setState({ password: text })}
+            secureTextEntry={true}
+            style={styles.textInput}
+            value={this.state.password}
+            placeholderTextColor='black'
+            autoCorrect={false}
+            autoFocus={false}
+          />
+          <View style={styles.buttonView}>
+            <View style={styles.signin}>
+              <Button success style={styles.btn} onPress={() => this.btnLoginPressed(this.state.email, this.state.password)}>
+                <Text> Login </Text>
               </Button>
             </View>
-          </Image>
-        </View>
-      );
-    };
-  
+
+            <View style={styles.signin}>
+              <Button warning style={styles.btn} onPress={() => this.navigate('Resgister')}>
+                <Text>  Sign in </Text>
+              </Button>
+            </View>
+
+          </View>
+          <View style={styles.sdk}>
+            <Button style={{ backgroundColor: '#2980b9' }}
+              onPress={() => this.fbLogin()}
+            >
+              <Icon name='facebook-with-circle' style={{ fontSize: 28, color: 'black', margin: 10 }} onPress={() => this.fbLogin()} />
+              <Text>Đăng nhập với Facebook</Text>
+            </Button>
+          </View>
+        </Image>
+      </View>
+    );
+
+
+  };
+
 }
 
 var styles = StyleSheet.create({
