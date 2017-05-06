@@ -33,7 +33,7 @@ var newOrderPostkey = firebaseApp
     .child('Inforcustomer')
     .push()
     .key;
-var array = [];
+
 //
 var Tongtien = 0;
 
@@ -117,37 +117,7 @@ export default class Pay extends Component {
     }
     /* code logic dùng lúc bảo trì hệ thống
     componentDidMount() {
-        this.statusRef.on('value', (snap) => {
-            var count = snap.numChildren()
-            for (i = 1; i < count; i++) {
-                snap.forEach((child) => {
-                    array.push({
-                        CartId: child.key,
-                        trangthai: child
-                            .val()
-                            .Trangthai
-                            .Status,
-                        flag: child
-                            .val()
-                            .Trangthai
-                            .Flag,
-                    })
-                })
-            }
-            this.setState({ Dem: count })
-            console.log(this.state.Dem)
-            for (i = 0; i < this.state.Dem; i++) {
-                if (array[i].flag == 0) {
-                    firebaseApp.database().ref('Cart/' + array[i].CartId).remove()
-
-                } else {
-                    console.log(array[i].trangthai)
-                    console.log(array[i].CartId)
-                }
-            }
-
-        })
-
+       
         this.statusRef.on('value', (snap) => {
             var dem = snap.numChildren()
             console.log('Giỏ hiện tại' + dem)

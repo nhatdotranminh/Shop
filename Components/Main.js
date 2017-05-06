@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {
   StyleSheet,
-  
+
   View,
   Navigator,
   ListView,
@@ -27,11 +27,10 @@ import Drawer from 'react-native-drawer';
 import {
   Tile,
   Overlay,
-  
+
   Title,
   Subtitle,
   Heading,
-  
   Caption,
   Image,
   Row
@@ -61,7 +60,7 @@ export default class Main extends Component {
       loaded: false,
       searchText: '',
       array: [],
-      cartID: this.props.cartID
+
     }
 
     this.itemsRef = this
@@ -106,12 +105,20 @@ export default class Main extends Component {
       })
 
   }
- 
+  _btnSearchNavigate(routename, searchText) {
+    this.props.navigator.push({
+      id: routename,
+      passProps:{
+        searchText: searchText
+      }
+    })
+  }
+
   createRow(uri) {
     console.log('state id' + this.state.cartID)
     return (
       <TouchableOpacity
-        onPress={() => this.navigate('LaptopProducts', uri.name, this.props.cartID, )}>
+        onPress={() => this.navigate('LaptopProducts', uri.name, this.props.cartId, )}>
         <Row>
           <Image
             source={{
@@ -139,7 +146,7 @@ export default class Main extends Component {
 
       })
   }
-  cartNavigate(routeid, cartid, ) {
+  cartNavigate(routeid, cartid) {
     this
       .props
       .navigator
@@ -151,7 +158,7 @@ export default class Main extends Component {
 
       })
   }
-  onPressAlert(){
+  onPressAlert() {
     alert('Tính năng này chưa có')
   }
   //
@@ -183,10 +190,10 @@ export default class Main extends Component {
               <Input
                 placeholder="Search"
                 onChangeText={(text) => this.setState({ searchText: text })}
-                value={this.state.text} />
+                value={this.state.searchText} />
 
             </Item>
-            <Button transparent>
+            <Button transparent onPress={() => this._btnSearchNavigate('Search', this.state.searchText)}>
               <Text>Search</Text>
             </Button>
           </Header>
@@ -229,25 +236,25 @@ export default class Main extends Component {
             </ScrollView>
           </View>
           <Footer >
-                      <FooterTab>
-                          <Button>
-                              <Icon name="apps"  onPress={()=> this.onPressAlert()}/>
-                              <Text>Apps</Text>
-                          </Button>
-                          <Button>
-                              <Icon name="camera"  onPress={()=> this.onPressAlert()}/>
-                              <Text>Camera</Text>
-                          </Button>
-                          <Button >
-                              <Icon active name="navigate"  onPress={()=> this.onPressAlert()}/>
-                              <Text>Navigate</Text>
-                          </Button>
-                          <Button>
-                              <Icon name="person"  onPress={()=> this.onPressAlert()}/>
-                              <Text>Contact</Text>
-                          </Button>
-                      </FooterTab>
-                  </Footer>
+            <FooterTab>
+              <Button>
+                <Icon name="cart" onPress={() => this.cartNavigate('Cart', this.props.cartId)} />
+                <Text>Giỏ hàng</Text>
+              </Button>
+              <Button hidden={true}>
+                <Icon name="camera" onPress={() => this.onPressAlert()} />
+                <Text>Camera</Text>
+              </Button>
+              <Button >
+                <Icon active name="navigate" onPress={() => this.onPressAlert()} />
+                <Text>Navigate</Text>
+              </Button>
+              <Button>
+                <Icon name="person" onPress={() => this.navigate('UserInfor')} />
+                <Text>Contact</Text>
+              </Button>
+            </FooterTab>
+          </Footer>
 
         </Container>
 

@@ -17,11 +17,12 @@ import {
     Footer,
     Tab,
     Tabs,
-    Toast
+    Toast,
+    Button,
 } from 'native-base'
 import {
     Icon,
-    Button,
+    
     Screen,
     ScrollView,
     Image,
@@ -132,7 +133,7 @@ export default class Detail extends Component {
         if (this.props.cartId === this.state.newCartId) {
             let childId = this
                 .getRef()
-                .child('Cart/' + this.props.cartId+ '/Hanghoa/')
+                .child('Cart/' + this.props.cartId + '/Hanghoa/')
                 .push()
                 .key;
             firebaseApp
@@ -152,7 +153,7 @@ export default class Detail extends Component {
         } else {
             var Childkey = this
                 .getRef()
-                .child('Cart/' + newKey+'/Hanghoa')
+                .child('Cart/' + newKey + '/Hanghoa')
                 .push()
                 .key;
             firebaseApp
@@ -181,7 +182,7 @@ export default class Detail extends Component {
                         backgroundColor: '#3498db'
                     }}>
                     <Left>
-                        <Button styleName='clear' onPress={() => this.props.navigator.pop()}>
+                        <Button light transparent onPress={() => this.props.navigator.pop()}>
                             <Text
                                 style={{
                                     color: '#2980b9',
@@ -197,7 +198,7 @@ export default class Detail extends Component {
                     </Body>
                     <Right>
                         <Button
-                            styleName='clear'
+                            light transparent
                             onPress={() => this.navigate('Cart', this.state.newCartId, )}>
                             <Icon
                                 style={{
@@ -207,69 +208,60 @@ export default class Detail extends Component {
                         </Button>
                     </Right>
                 </Header>
-                <View style={{
+                <ScrollView style={{
                     flex: 9
                 }}>
-                    <Tabs>
-                        <Tab heading="Tổng quan">
-                            <View style={styles.tongquancontainer}>
-                                <View style={styles.nameAndPriceCon}>
-                                    <Text style={styles.productNameText}>
-                                        {this.props.productName}
-                                    </Text>
-                                    <Text style={styles.price}>
-                                        {this
-                                            .props
-                                            .price
-                                            .toString()
-                                            .replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,")}
-                                        VNĐ
-                                    </Text>
-                                </View>
-                                <View style={styles.imgContainer}>
-                                    <Image
-                                        styleName='large-wide'
-                                        source={{
-                                            uri: this.state.uriImage
-                                        }} />
-                                </View>
-                                <View style={styles.imageList}>
-                                    <ScrollView
-                                        horizontal={true}
-                                        automaticallyAdjustContentInsets={false}
-                                        style={[styles.scrollView, styles.horizontalScrollView]}>
-                                        {this
-                                            .state
-                                            .arr
-                                            .map(this.renderRow.bind(this))}
-                                    </ScrollView>
-                                </View>
 
-                            </View>
-                        </Tab>
-                        <Tab heading="Chi tiết sản phẩm">
-                            <View style={styles.ctContainer}>
+                    <View style={styles.tongquancontainer}>
+                        <View style={styles.nameAndPriceCon}>
+                            <Text style={styles.productNameText}>
+                                {this.props.productName}
+                            </Text>
+                            <Text style={styles.price}>
+                                {this
+                                    .props
+                                    .price
+                                    .toString()
+                                    .replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,")}
+                                VNĐ
+                                    </Text>
+                        </View>
+                        <View style={styles.imgContainer}>
+                            <Image
+                                styleName='large-wide'
+                                source={{
+                                    uri: this.state.uriImage
+                                }} />
+                        </View>
+                        <View style={styles.imageList}>
+                            <ScrollView
+                                horizontal={true}
+                                automaticallyAdjustContentInsets={false}
+                                style={[styles.scrollView, styles.horizontalScrollView]}>
+                                {this
+                                    .state
+                                    .arr
+                                    .map(this.renderRow.bind(this))}
+                            </ScrollView>
+                        </View>
+                        <View style={styles.ctContainer}>
 
-                                <Title >Thông số kỹ thuật:
+                            <Title >Thông số kỹ thuật:
                                     <Subtitle>{this.props.Mieuta}</Subtitle>
-                                </Title>
+                            </Title>
 
-                                <Text style={styles.text}>Tình trạng: {this.props.tinhtrang}</Text>
-                                <Text style={styles.text}>Bảo hành: {this.props.baohanh}</Text>
-                                <Text style={styles.text}>Quà tặng: {this.props.khuyenmai}</Text>
-                            </View>
-                        </Tab>
-                    </Tabs>
-                </View>
-                <View style={{
-                    flex: 1
-                }}>
+                            <Text style={styles.text}>Tình trạng: {this.props.tinhtrang}</Text>
+                            <Text style={styles.text}>Bảo hành: {this.props.baohanh}</Text>
+                            <Text style={styles.text}>Quà tặng: {this.props.khuyenmai}</Text>
+                        </View>
+
+                    </View>
+
+
+                </ScrollView>
+                
                     <Button
-                        styleName='full-width'
-                        style={{
-                            backgroundColor: '#2ecc71',
-                            borderRadius: 10
-                        }}
+                        full success
                         onPress={() => this.orderNavigate('Cart', this.props.productName, this.props.price, this.props.image, this.state.newCartId)}>
                         <Icon
                             style={{
@@ -278,7 +270,7 @@ export default class Detail extends Component {
                             name='add-to-cart' />
                         <Text>ADD TO CART</Text>
                     </Button>
-                </View>
+               
 
             </Screen>
         );

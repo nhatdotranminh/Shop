@@ -3,7 +3,7 @@ import {
   View, Text, TouchableOpacity, Navigator, StyleSheet, Image, TextInput, Dimensions, AsyncStorage
 } from 'react-native';
 import {
-  Spinner, Button
+  Spinner, Button, Toast
 } from 'native-base';
 
 // import lib 
@@ -36,7 +36,7 @@ class Login extends Component {
 
     }
     this.btnLoginPressed = this.btnLoginPressed.bind(this);
-    AsyncStorage.setItem("user_UID", "")
+
   }
 
   // login firebase email and password
@@ -47,46 +47,63 @@ class Login extends Component {
         var errorCode = error.code;
         var errorMessage = error.message;
         if (errorCode === 'auth/wrong-password') {
-          alert('Wrong password.');
+          Toast.show({
+            type: 'warning',
+            text: 'Sai mật khẩu',
+            position: 'bottom',
+            buttonText: 'Ok'
+          })
+          return;
         } else {
           console.log('Sign in Error:' + errorMessage);
         }
         if (errorCode == 'auth/invalid-email') {
-          alert('invalid Email');
+          Toast.show({
+            type: 'warning',
+            text: 'Địa chỉ Email không hợp lệ',
+            position: 'bottom',
+            buttonText: 'Ok'
+          })
+          return;
         }
-
       })
-
-    firebase.auth().onAuthStateChanged(function (user) {
-      if (user !== null) {
-        console.log(user.uid)
-        console.log(user.email)
-        console.log(user.displayName)
-        AsyncStorage.setItem("user_UID", user.uid)
-        if (user.displayName != null) {
-          AsyncStorage.setItem('user_displayName', user.displayName)
+      .then(function (user) {
+        if (user != null) {
+          this.props.navigator.push({
+            id:'Main'
+          })
+        } else {
+          Toast.show({
+            type: 'danger',
+            text: 'Bạn chưa nhập email và mật khẩu',
+            position: 'bottom',
+            duration: 2000
+          })
         }
-        else{
-
+      })
+    /*  firebase.auth().onAuthStateChanged(function (user) {
+        if (user !== null) {
+          console.log(user.uid)
+          console.log(user.email)
+          console.log(user.displayName)
+          AsyncStorage.setItem("user_UID", user.uid)
         }
-        AsyncStorage.setItem('user_Email', user.email)
-
-      }
-      else {
-        console.log('not logged in')
-      }
-    });
-    try {
-      const value = AsyncStorage.getItem('user_UID');
-      if (value !== null) {
-        // We have data!!
-        this.navigate('UserInfor')
-        console.log(value);
-
-      }
-    } catch (error) {
-      // Error retrieving data
-    }
+        else {
+          console.log('not logged in')
+        }
+      });
+      /*
+      try {
+        const value = AsyncStorage.getItem('user_UID');
+        if (value !== null) {
+          // We have data!!
+          this.navigate('Main')
+          console.log(value);
+  
+        }
+      } catch (error) {
+        // Error retrieving data
+      }*/
 
   }
 

@@ -15,6 +15,8 @@ import Cart from '../Components/Cart'
 import Pay from '../Components/Pay'
 import Resgister from '../Components/Resgister'
 import UserInfor from '../Components/UserInfor'
+import Search from '../Components/Search'
+import Admin from '../Components/Admin'
 
 
 import navigationHelper from '../Help/navigation';
@@ -38,8 +40,13 @@ export default class App extends Component {
         return (<Pay navigator={navigator}{...route.passProps} />)
       case 'Resgister':
         return (<Resgister navigator={navigator}{...route.passProps} />)
-        case 'UserInfor':
+      case 'UserInfor':
         return (<UserInfor navigator={navigator}{...route.passProps} />)
+      case 'Search':
+        return (<Search navigator={navigator}{...route.passProps} />)
+      case 'Admin':
+        return (<Admin navigator={navigator}{...route.passProps} />)
+
 
     }
 
@@ -113,7 +120,7 @@ export default class App extends Component {
           ref={(ref) => this._navigator = ref}
           configureScene={(route) => Navigator.SceneConfigs.FloatFromLeft}
           initialRoute={{
-            id: 'Main',
+            id: 'Admin',
             index: 0
           }}
           renderScene={(route, navigator) => this._renderScene(route, navigator)}

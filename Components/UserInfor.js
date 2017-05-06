@@ -4,7 +4,8 @@ import { Screen, Button, Divider, Caption } from '@shoutem/ui'
 
 const firebase = require('firebase');
 import firebaseApp from '../Help/firebase';
-var value, name, email;
+//var value, name, email;
+var dpName, mail, emailVerified, imgURL, uid, providerData;
 var deviceScreen = Dimensions.get('window')
 export default class UserInfor extends Component {
     constructor(props) {
@@ -12,73 +13,77 @@ export default class UserInfor extends Component {
         this.state = {
             selectedValue: '',
             displayName: '',
-            email: ''
+            email: '',
+            photoURL: '',
+            uid: ''
+
 
         }
     }
     componentDidMount() {
-        this._loadInitialState().done();
+        // this._loadInitialState().done();
+        firebaseApp.auth().onAuthStateChanged(function (user) {
+            if (user) {
+                // User is signed in.
+                dpName = user.displayName;
+                mail = user.email;
+                emailVerified = user.emailVerified;
+                imgURL = user.photoURL;
+                // var isAnonymous = user.isAnonymous;
+                uid = user.uid;
+                providerData = user.providerData;
+                // ...
+
+            } else {
+                // User is signed out.
+                // ...
+            }
+        });
+        this.setState({
+            displayName: dpName,
+            email: mail,
+            photoURL: imgURL
+        })
+
     }
 
-    _loadInitialState = async () => {
-        try {
-            value = await AsyncStorage.getItem('user_UID');
-            if (value !== null) {
-                this.setState({ selectedValue: value });
-
-            } else {
-            }
-        } catch (error) {
-            console.log(error)
-        }
-        try {
-            name = await AsyncStorage.getItem('user_displayName');
-            if (name !== null) {
-                this.setState({ displayName: name});
-
-            } else {
-                this.setState({displayName: ""})
-            }
-        } catch (error) {
-            console.log(error)
-        }
-        try {
-            email = await AsyncStorage.getItem('user_Email');
-            if (email !== null) {
-                this.setState({ email: email });
-
-            } else {
-            }
-        } catch (error) {
-            console.log(error)
-        }
-    };
-    /* _removeStorage = async () => {
+    /* _loadInitialState = async () => {
          try {
-             await AsyncStorage.removeItem('user_UID');
+             value = await AsyncStorage.getItem('user_UID');
+             if (value !== null) {
+                 this.setState({ selectedValue: value });
  
+             } else {
+             }
          } catch (error) {
- 
+             console.log(error)
          }
-     };*/
+     };
+     /* _removeStorage = async () => {
+          try {
+              await AsyncStorage.removeItem('user_UID');
+  
+          } catch (error) {
+  
+          }
+      };*/
     _logOut() {
-        firebase.auth().signOut().then(function () {
+        firebaseApp.auth().signOut().then(function () {
             console.log("Ban da dang xuat")
         }).catch(function (error) {
             // An error happened.
         });
-        async () => {
-            try {
-                await AsyncStorage.removeItem('user_UID');
-
-            } catch (error) {
-
-            }
-        }
+        /* async () => {
+             try {
+                 await AsyncStorage.removeItem('user_UID');
+ 
+             } catch (error) {
+ 
+             }
+         }*/
         this.props.navigator.push({
             id: 'Login',
             passProps: {
-                flag: 1
             }
         });
 
@@ -105,27 +110,35 @@ export default class UserInfor extends Component {
         });
     }*/
     render() {
+        if (this.state.uid == "" || this.state.uid == null) {
+            return (
+                <Screen>
+                    <Text>Ban chua dang nhap</Text>
+                </Screen>
+            );
+        }
+        else {
+          //  console.log(this.state.selectedValue)
+            return (
+                <Screen>
+                    <View style={{ padding: 10 }}>
+                        <Divider styleName="section-header">
+                            <Caption>Tên</Caption>
+                            <Caption>{this.state.displayName}</Caption>
+                        </Divider>
+                        <Divider styleName="section-header">
+                            <Caption>Email</Caption>
+                            <Caption>{this.state.email}</Caption>
+                        </Divider>
 
-        console.log(this.state.selectedValue)
-        return (
-            <Screen>
-                <View style={{ padding: 10 }}>
-                    <Divider styleName="section-header">
-                        <Caption>Tên</Caption>
-                        <Caption>{this.state.displayName}</Caption>
-                    </Divider>
-                    <Divider styleName="section-header">
-                        <Caption>Email</Caption>
-                        <Caption>{this.state.email}</Caption>
-                    </Divider>
+
+                        <Button onPress={() => this._logOut()}><Text>Log out</Text></Button>
 
 
-                    <Button onPress={() => this._logOut()}><Text>Log out</Text></Button>
-                    
-
-                </View>
-            </Screen>
-        );
+                    </View>
+                </Screen>
+            );
+        }
     }
 }
 
